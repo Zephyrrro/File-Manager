@@ -14,7 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.filemanager.Activity.ChildActivity;
 import com.example.filemanager.FileView;
 import com.example.filemanager.R;
+import com.example.filemanager.Utils.GetFilesUtils;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHolder> {
@@ -34,6 +37,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
   }
 
   public FileViewAdapter(List<FileView> fileList) {
+    Collections.sort(fileList, GetFilesUtils.getInstance().defaultOrder());
     this.fileList = fileList;
   }
 

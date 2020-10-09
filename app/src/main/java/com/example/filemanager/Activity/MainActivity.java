@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.example.filemanager.Adapter.FileViewAdapter;
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
   };
   private List<String> mPermissionList = new ArrayList<>();
   private static final String TAG = "MainActivity";
+
+  private FileViewAdapter adapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +62,29 @@ public class MainActivity extends AppCompatActivity {
     int id = item.getItemId();
 
     //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
-      return true;
+    switch (id) {
+      case R.id.sort_by_default:
+        if (!item.isChecked()) {
+          Collections.sort(fileList, GetFilesUtils.getInstance().fileOrder(GetFilesUtils.SORT_BY_DEFAULT));
+          adapter.notifyDataSetChanged();
+          item.setChecked(true);
+        }
+        return true;
+      case R.id.sort_by_size:
+        if (!item.isChecked()) {
+          Collections.sort(fileList, GetFilesUtils.getInstance().fileOrder(GetFilesUtils.SORT_BY_SIZE));
+          adapter.notifyDataSetChanged();
+          item.setChecked(true);
+        }
+        return true;
+      case R.id.sort_by_time:
+        if (!item.isChecked()) {
+          Collections.sort(fileList, GetFilesUtils.getInstance().fileOrder(GetFilesUtils.SORT_BY_TIME));
+          adapter.notifyDataSetChanged();
+          item.setChecked(true);
+        }
+        return true;
     }
-
     return super.onOptionsItemSelected(item);
   }
 
@@ -105,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView = findViewById(R.id.file_container);
     LinearLayoutManager layoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(layoutManager);
-    FileViewAdapter adapter = new FileViewAdapter(fileList);
+
+    adapter = new FileViewAdapter(fileList);
     recyclerView.setAdapter(adapter);
     recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
