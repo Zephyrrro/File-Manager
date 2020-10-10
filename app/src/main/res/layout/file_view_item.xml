@@ -6,6 +6,13 @@
   android:clickable="true"
   android:focusable="true">
 
+  <CheckBox
+    android:id="@+id/selected"
+    android:layout_gravity="center"
+    android:layout_width="30dp"
+    android:layout_height="30dp"
+    android:visibility="gone"/>
+
   <ImageView
     android:id="@+id/file_image"
     android:layout_width="0dp"

@@ -1,18 +1,23 @@
 package com.example.filemanager;
 
+import android.os.Build;
+import androidx.annotation.RequiresApi;
+
 import java.io.File;
 import java.util.Locale;
+import java.nio.file.Path;
 
 public class FileView {
   private String fileName;
   private Boolean isFolder;
   private String fileType;
-  private String filePath;
+  private Path filePath;
   private long fileSize;
   private long fileTime;
 
   private final String FILE_TYPE_FOLDER = "folder";
 
+  @RequiresApi(api = Build.VERSION_CODES.O)
   public FileView(File file) {
     this.fileName = file.getName();
     if (file.isDirectory()) {
@@ -22,7 +27,7 @@ public class FileView {
       this.isFolder = false;
       this.fileType = getFileType(file.getName());
     }
-    this.filePath = file.getAbsolutePath();
+    this.filePath = file.toPath();
     this.fileSize = file.length();
     this.fileTime = file.lastModified();
   }
@@ -49,7 +54,7 @@ public class FileView {
     return fileType;
   }
 
-  public String getFilePath() {
+  public Path getFilePath() {
     return filePath;
   }
 

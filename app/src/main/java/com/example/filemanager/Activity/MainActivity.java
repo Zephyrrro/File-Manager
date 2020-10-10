@@ -1,10 +1,13 @@
 package com.example.filemanager.Activity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -17,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +28,10 @@ import java.util.List;
 import com.example.filemanager.Adapter.FileViewAdapter;
 import com.example.filemanager.FileView;
 import com.example.filemanager.R;
+import com.example.filemanager.Utils.FileUtils;
 import com.example.filemanager.Utils.GetFilesUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +52,13 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     checkPermission();
+    FloatingActionButton fab = findViewById(R.id.fab);
+    fab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        deleteFile();
+      }
+    });
   }
 
   @Override
@@ -52,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_main, menu);
     return true;
+  }
+
+  @Override
+  public void onBackPressed() {
+    if(!adapter.leaveSelectMode()){
+      super.onBackPressed();
+    }
   }
 
   @Override
@@ -63,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
 
     //noinspection SimplifiableIfStatement
     switch (id) {
+      case R.id.delete:
+        deleteFile();
+        return true;
       case R.id.sort_by_default:
         if (!item.isChecked()) {
           Collections.sort(fileList, GetFilesUtils.getInstance().fileOrder(GetFilesUtils.SORT_BY_DEFAULT));
@@ -133,4 +157,33 @@ public class MainActivity extends AppCompatActivity {
     recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
   }
+
+  private void deleteFile(){
+      final List<FileView> selected = adapter.getSelected();
+      new AlertDialog.Builder(MainActivity.this)
+          .setTitle("删除文件")
+          .setMessage("你确定要删除" + selected.size() + "个文件/文件夹？此操作无法撤销。")
+          .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+              try{
+              for(FileView fileView : selected){
+                FileUtils.Instance.delete(fileView.getFilePath());
+
+              }
+              Snackbar.make(findViewById(R.id.main_layout),"Deleted!",3000).show();
+            }catch (IOException e){
+              Snackbar.make(findViewById(R.id.main_layout),"删除文件失败，原因：" + e.getMessage(),3000).show();
+            }
+            }
+          })
+          .setPositiveButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+          }).show();
+  }
+
+
 }

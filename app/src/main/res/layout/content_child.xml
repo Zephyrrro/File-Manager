@@ -3,9 +3,19 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
+  <EditText
+    android:id="@+id/search_input"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="@string/action_settings"
+    android:maxLines="1"
+    android:textAlignment="center"
+    android:gravity="center_horizontal" />
+
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/file_container_child"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"
+  />
 
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.example.filemanager.Utils.GetFilesUtils;
 import java.io.File;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -32,8 +34,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHolder> {
+  private boolean selectMode;
   private List<FileView> fileList;
   private static final String TAG = "FileViewAdapter";
+  private List<ViewHolder> viewHolders = new ArrayList<>();
 
   static class ViewHolder extends RecyclerView.ViewHolder {
     View fileView;
@@ -41,10 +45,13 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     TextView fileName;
     TextView fileModifiedTime;
     TextView fileSize;
+    CheckBox selected;
+
 
     public ViewHolder(@NonNull View itemView) {
       super(itemView);
       fileView = itemView;
+      selected = itemView.findViewById(R.id.selected);
       fileImage = itemView.findViewById(R.id.file_image);
       fileName = itemView.findViewById(R.id.file_name);
       fileModifiedTime = itemView.findViewById(R.id.file_modified_time);
@@ -57,19 +64,24 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     this.fileList = fileList;
   }
 
+
   @NonNull
   @Override
-  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_view_item, parent, false);
     final ViewHolder holder = new ViewHolder(view);
     holder.fileView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        if(selectMode){
+            holder.selected.setChecked(!holder.selected.isChecked());
+            return;
+        }
         int position = holder.getAdapterPosition();
         FileView file = fileList.get(position);
         if (file.isFolder()) {
           Intent intent = new Intent(v.getContext(), ChildActivity.class);
-          intent.putExtra("path", file.getFilePath());
+          intent.putExtra("path", file.getFilePath().toString());
           v.getContext().startActivity(intent);
         } else {
           boolean isNeedMatch = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
@@ -86,7 +98,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
             Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(file.getFilePath())), mime);
+            intent.setDataAndType(Uri.fromFile(new File(file.getFilePath().toString())), mime);
             v.getContext().startActivity(intent);
           } catch (Exception e) {
             e.printStackTrace();
@@ -99,6 +111,18 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
         }
       }
     });
+
+    holder.fileView.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View view) {
+        selectMode = true;
+        for(ViewHolder viewHolder: viewHolders){
+          viewHolder.selected.setVisibility(View.VISIBLE);
+        }
+        return true;
+      }
+    });
+    viewHolders.add(holder);
     return holder;
   }
 
@@ -121,10 +145,37 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.CHINA);
     holder.fileModifiedTime.setText(format.format(new Date(fileView.getFileTime())));
     holder.fileSize.setText(GetFilesUtils.getInstance().getFileSizeStr(fileView.getFileSize()));
+    holder.selected.setVisibility(selectMode ? View.VISIBLE : View.GONE);
   }
+
 
   @Override
   public int getItemCount() {
     return this.fileList.size();
+  }
+
+  public boolean leaveSelectMode(){
+    if(!selectMode){
+      return false;
+    }
+    selectMode = false;
+    for(ViewHolder viewHolder: viewHolders){
+      viewHolder.selected.setChecked(false);
+      viewHolder.selected.setVisibility(View.GONE);
+    }
+    return true;
+  }
+
+  public List<FileView> getSelected(){
+    if(!selectMode){
+      return new ArrayList<>();
+    }
+    List<FileView> selectedFileView = new ArrayList<>();
+    for(int i =0; i < viewHolders.size(); i++){
+      if(viewHolders.get(i).selected.isChecked()){
+        selectedFileView.add(fileList.get(i));
+      }
+    }
+    return selectedFileView;
   }
 }
