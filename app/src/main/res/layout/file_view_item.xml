@@ -4,8 +4,7 @@
   android:layout_height="wrap_content"
   android:background="@drawable/item_touch"
   android:clickable="true"
-  android:focusable="true"
-  >
+  android:focusable="true">
 
   <ImageView
     android:id="@+id/file_image"
@@ -18,18 +17,51 @@
   <LinearLayout
     android:layout_width="0dp"
     android:layout_height="70dp"
-    android:layout_weight="5"
-    android:orientation="vertical">
+    android:layout_weight="5">
 
-    <TextView
-      android:id="@+id/file_name"
+    <LinearLayout
       android:layout_width="wrap_content"
-      android:layout_height="0dp"
-      android:layout_weight="2"
-      android:gravity="center_vertical"
-      android:text="Test"
-      android:textColor="#0d0d0d"
-      android:textSize="16dp" />
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:orientation="vertical">
+
+
+      <TextView
+        android:id="@+id/file_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="Test"
+        android:textColor="#0d0d0d"
+        android:textSize="16dp" />
+
+      <LinearLayout
+        android:id="@+id/file_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+          android:id="@+id/file_modified_time"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:text="Test"
+          android:textColor="#c1c1c1"
+          android:textSize="12dp" />
+
+        <TextView
+          android:id="@+id/file_size"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:layout_marginLeft="20dp"
+          android:text="test"
+          android:textColor="#c1c1c1"
+          android:textSize="12dp" />
+      </LinearLayout>
+    </LinearLayout>
   </LinearLayout>
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.util.Log;
 import com.example.filemanager.FileView;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -108,4 +109,20 @@ public class GetFilesUtils {
   public Comparator<FileView> defaultOrder() {
     return fileOrder(SORT_BY_DEFAULT);
   }
+
+  public String getFileSizeStr(long fileSize) {
+    String res = "";
+    DecimalFormat df = new DecimalFormat("#.00");
+    if (fileSize < 1024) {
+      res = fileSize + "B";
+    } else if (fileSize < 1048576) {
+      res = df.format(fileSize / (double) 1024) + "KB";
+    } else if (fileSize < 1073741824) {
+      res = df.format(fileSize / (double) 1048576) + "MB";
+    } else {
+      res = df.format(fileSize / (double) 1073741824) + "GB";
+    }
+    return res;
+  }
 }
+

@@ -13,8 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".Activity.BaseActivity" >
-        </activity>
         <activity
             android:name=".Activity.ChildActivity"
             android:label="@string/title_activity_child"

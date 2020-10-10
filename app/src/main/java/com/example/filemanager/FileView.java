@@ -1,6 +1,7 @@
 package com.example.filemanager;
 
 import java.io.File;
+import java.util.Locale;
 
 public class FileView {
   private String fileName;
@@ -30,7 +31,7 @@ public class FileView {
     if (!fileName.equals("")) {
       int dotIndex = fileName.lastIndexOf(".");
       if (dotIndex != -1) {
-        return fileName.substring(dotIndex + 1);
+        return fileName.substring(dotIndex + 1).toLowerCase(Locale.US);
       }
     }
     return "";
