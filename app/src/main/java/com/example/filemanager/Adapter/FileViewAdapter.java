@@ -80,7 +80,6 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     fileTypeIconMap.put("png", R.drawable.filetype_png);
   }
 
-
   @NonNull
   @Override
   public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
@@ -134,23 +133,22 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
       public boolean onLongClick(View view) {
         if (!selectMode) {
           selectMode = true;
-//          mContext.setFabVisibility(View.VISIBLE);
           int position = holder.getAdapterPosition();
-          viewHolders.get(position).selected.setChecked(true);
           mContext.setButtomActionBarVisibility(View.VISIBLE);
           for (ViewHolder viewHolder : viewHolders) {
             viewHolder.selected.setVisibility(View.VISIBLE);
           }
+          holder.selected.setChecked(true);
         }
         return true;
       }
     });
-    viewHolders.add(holder);
     return holder;
   }
 
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    Log.d(TAG, "onBindViewHolder Call");
     FileView fileView = fileList.get(position);
     //  TODO: 更多类型的icon
     Integer fileImage = fileTypeIconMap.get(fileView.getFileType());
@@ -159,10 +157,11 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     }
     holder.fileImage.setImageResource(fileImage);
     holder.fileName.setText(fileView.getFileName());
-    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.CHINA);
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
     holder.fileModifiedTime.setText(format.format(new Date(fileView.getFileTime())));
     holder.fileSize.setText(GetFilesUtils.getInstance().getFileSizeStr(fileView.getFileSize()));
     holder.selected.setVisibility(selectMode ? View.VISIBLE : View.GONE);
+    viewHolders.add(holder);
   }
 
 

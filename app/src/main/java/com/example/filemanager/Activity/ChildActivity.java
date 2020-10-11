@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class ChildActivity extends BaseActivity {
-  private String path;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

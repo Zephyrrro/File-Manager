@@ -46,16 +46,11 @@ public class MainActivity extends BaseActivity {
 
   @Override
   public void init() {
-    String basePath = GetFilesUtils.getInstance().getBasePath();
-    fileList = GetFilesUtils.getInstance().getChildNode(basePath);
-
-    RecyclerView recyclerView = findViewById(R.id.file_container);
-    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-    recyclerView.setLayoutManager(layoutManager);
+    path = GetFilesUtils.getInstance().getBasePath();
+    fileList = GetFilesUtils.getInstance().getChildNode(path);
 
     adapter = new FileViewAdapter(fileList);
     recyclerView.setAdapter(adapter);
-    recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
   }
 
   @Override

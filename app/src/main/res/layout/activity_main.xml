@@ -35,19 +35,6 @@
     android:clickable="true"
     android:orientation="horizontal" />
 
-<!--  <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--    android:id="@+id/fab"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:layout_gravity="bottom|end"-->
-<!--    android:layout_margin="16dp"-->
-<!--    android:backgroundTint="#FFA500"-->
-<!--    android:elevation="10dp"-->
-<!--    android:src="@drawable/baseline_add_24"-->
-<!--    android:tint="@color/colorWhite"-->
-<!--    android:visibility="gone"-->
-<!--    app:borderWidth="0dp" />-->
-
   <com.github.clans.fab.FloatingActionMenu
     android:id="@+id/fab"
     android:layout_width="wrap_content"
@@ -57,7 +44,7 @@
     android:layout_marginBottom="8dp"
     fab:menu_backgroundColor="@android:color/transparent"
     fab:menu_buttonSpacing="10dp"
-    fab:menu_colorNormal="#FFA500"
+    fab:menu_colorNormal="@color/orange"
     fab:menu_colorPressed="#DAA520"
     fab:menu_colorRipple="#99FFFFFF"
     fab:menu_fab_hide_animation="@anim/fab_slide_in_from_right"
@@ -70,22 +57,22 @@
     fab:menu_openDirection="up">
 
     <com.github.clans.fab.FloatingActionButton
-      android:id="@+id/menu_item1"
+      android:id="@+id/create_dir"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/ic_outline_folder_open_24"
-      fab:fab_colorNormal="#FFA500"
+      fab:fab_colorNormal="@color/orange"
       fab:fab_colorPressed="#DAA520"
       fab:fab_colorRipple="#99FFFFFF"
       fab:fab_label="新建文件夹"
       fab:fab_size="mini" />
 
     <com.github.clans.fab.FloatingActionButton
-      android:id="@+id/menu_item2"
+      android:id="@+id/create_file"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/ic_outline_insert_drive_file_24"
-      fab:fab_colorNormal="#FFA500"
+      fab:fab_colorNormal="@color/orange"
       fab:fab_colorPressed="#DAA520"
       fab:fab_colorRipple="#99FFFFFF"
       fab:fab_label="新建文件"
