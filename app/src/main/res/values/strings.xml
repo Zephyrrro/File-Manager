@@ -21,4 +21,8 @@
   <string name="paste">粘贴</string>
   <string name="delete">删除</string>
 
+  <string name="search">搜索当前文件夹</string>
+  <string name="text_expand_me">展开</string>
+  <string name="text_welcome_message">Hello</string>
+
 </resources>

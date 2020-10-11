@@ -15,7 +15,7 @@
     android:theme="@style/AppTheme">
     <activity android:name=".Activity.BaseActivity"></activity>
     <activity
-      android:name=".Activity.ChildActivity"
+      android:name=".Activity.SearchActivity"
       android:label="@string/title_activity_child"
       android:theme="@style/AppTheme.NoActionBar" />
     <activity

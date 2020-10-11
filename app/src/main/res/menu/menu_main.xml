@@ -4,11 +4,21 @@
   tools:context="com.example.filemanager.Activity.MainActivity"
   >
   <item
-    android:id="@+id/search"
-    android:icon="@drawable/baseline_add_24"
+      android:id="@+id/search"
+      android:title="@string/toolbar_new"
+      app:showAsAction="ifRoom"
+      android:icon="@drawable/ic_baseline_search_24">
+  </item>
+  <item
+    android:id="@+id/create"
     android:title="@string/toolbar_new"
+<<<<<<< HEAD
     app:showAsAction="ifRoom"
     android:iconTint="@color/colorWhite">
+=======
+    android:icon="@drawable/ic_baseline_search_24">
+
+>>>>>>> main
     <menu>
       <item android:id="@+id/new_folder"
             android:title="@string/toolbar_new_folder" />

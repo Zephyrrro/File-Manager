@@ -1,5 +1,6 @@
 package com.example.filemanager.Activity;
 
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,9 +34,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.filemanager.Adapter.FileViewAdapter;
 import com.example.filemanager.FileView;
 import com.example.filemanager.R;
+import com.example.filemanager.Utils.FileManagerUtils;
 import com.example.filemanager.Utils.FileUtils;
 import com.example.filemanager.Utils.GetFilesUtils;
 import com.github.clans.fab.FloatingActionMenu;
@@ -44,6 +49,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -62,10 +69,11 @@ public abstract class BaseActivity extends AppCompatActivity {
           Manifest.permission.READ_EXTERNAL_STORAGE
   };
   private List<String> mPermissionList = new ArrayList<>();
-
+  protected String path;
   public FileViewAdapter adapter;
+
   public List<FileView> fileList;
-  public String path;
+
 
   private static final String TAG = "BaseActivity";
 
@@ -202,8 +210,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     });
 
     checkPermission();
+    setBottomSheet();
   }
 
+  private void setBottomSheet(){
+    findViewById(R.id.bottom_delete).setOnClickListener(view -> deleteFile());
+    findViewById(R.id.bottom_cut).setOnClickListener(view -> cutOrCopyFile(true));
+    findViewById(R.id.bottom_copy).setOnClickListener(view -> cutOrCopyFile(false));
+    findViewById(R.id.bottom_paste).setOnClickListener(view -> pasteFile());
+  }
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
@@ -213,15 +228,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
 
-    //noinspection SimplifiableIfStatement
     switch (id) {
       case android.R.id.home:
-        if (adapter.leaveSelectMode()) {
+        if (!adapter.leaveSelectMode()) {
           finish();
         }
         return true;
@@ -252,7 +263,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
-    if (adapter.leaveSelectMode()) {
+    if (!adapter.leaveSelectMode()) {
       super.onBackPressed();
     }
   }
@@ -273,7 +284,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
-  protected abstract void init();
+  protected void init(){
+    Intent intent = getIntent();
+    path = intent.getStringExtra("path");
+
+    RecyclerView recyclerView = findViewById(R.id.file_container);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+  }
 
   protected abstract int getLayoutResourceId();
 
@@ -298,6 +316,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     buttomActionBar.setVisibility(View.GONE);
   }
 
+
   private void setFileViewSort(String sort) {
     Collections.sort(fileList, GetFilesUtils.getInstance().fileOrder(sort));
     adapter.notifyDataSetChanged();
@@ -306,6 +325,26 @@ public abstract class BaseActivity extends AppCompatActivity {
   private void closeFloatingMenu() {
     fab.close(true);
     greyCover.setVisibility(View.GONE);
+  }
+
+  private void cutOrCopyFile(boolean isCut){
+    List<Path> fileList = new ArrayList<>();
+    for(FileView fileView:adapter.getSelected()){
+      fileList.add(fileView.getFilePath());
+    }
+    if (isCut) {
+      FileManagerUtils.Instance.cut(fileList);
+    } else {
+      FileManagerUtils.Instance.copy(fileList);
+    }
+  }
+
+  private void pasteFile(){
+    try {
+      FileManagerUtils.Instance.paste(Paths.get(path));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   private void deleteFile() {
@@ -318,8 +357,8 @@ public abstract class BaseActivity extends AppCompatActivity {
               public void onClick(DialogInterface dialogInterface, int i) {
                 try {
                   for (FileView fileView : selected) {
-                    FileUtils.Instance.delete(fileView.getFilePath());
-                    fileList.remove(fileView);
+                    FileManagerUtils.Instance.delete(fileView.getFilePath());
+                    adapter.getFileList().remove(fileView);
                   }
                   adapter.notifyDataSetChanged();
                   Snackbar.make(findViewById(R.id.main_layout), "Deleted!", 3000).show();
