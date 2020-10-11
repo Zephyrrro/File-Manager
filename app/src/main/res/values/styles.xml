@@ -14,9 +14,18 @@
 
   <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-  <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
+  <style name="AppTheme.PopupOverlay" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!--toolbar color-->
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <!--状态栏颜色-->
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="titleTextColor">#ffffff</item>
     <item name="overlapAnchor">false</item>
-    <item name="titleTextColor">@color/colorWhite</item>
-    <item name="colorControlNormal">@color/colorWhite</item>
+    <item name="android:textColorSecondary">#ffffff</item>
+  </style>
+
+  <style name="menu_labels_style">
+    <item name="android:background">@drawable/fab_label_background</item>
+    <item name="android:textColor">@color/colorWhite</item>
   </style>
 </resources>

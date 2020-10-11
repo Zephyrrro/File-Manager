@@ -6,7 +6,11 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -41,6 +45,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
   private static final String TAG = "FileViewAdapter";
   private List<ViewHolder> viewHolders = new ArrayList<>();
   private Map<String, Integer> fileTypeIconMap = new HashMap<String, Integer>();
+  private BaseActivity mContext;
 
   static class ViewHolder extends RecyclerView.ViewHolder {
     View fileView;
@@ -79,6 +84,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
   @NonNull
   @Override
   public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
+    mContext = (BaseActivity) parent.getContext();
     View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_view_item, parent, false);
     final ViewHolder holder = new ViewHolder(view);
     holder.fileView.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +134,10 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
       public boolean onLongClick(View view) {
         if (!selectMode) {
           selectMode = true;
-          ((BaseActivity) parent.getContext()).setFabVisibility(View.VISIBLE);
+//          mContext.setFabVisibility(View.VISIBLE);
+          int position = holder.getAdapterPosition();
+          viewHolders.get(position).selected.setChecked(true);
+          mContext.setButtomActionBarVisibility(View.VISIBLE);
           for (ViewHolder viewHolder : viewHolders) {
             viewHolder.selected.setVisibility(View.VISIBLE);
           }
@@ -167,6 +176,8 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
       return true;
     }
     selectMode = false;
+//    mContext.setFabVisibility(View.GONE);
+    mContext.setButtomActionBarVisibility(View.GONE);
     for (ViewHolder viewHolder : viewHolders) {
       viewHolder.selected.setChecked(false);
       viewHolder.selected.setVisibility(View.GONE);
@@ -187,3 +198,5 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     return selectedFileView;
   }
 }
+
+

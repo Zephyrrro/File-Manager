@@ -2,16 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
+  android:animateLayoutChanges="true"
   android:background="@drawable/item_touch"
   android:clickable="true"
   android:focusable="true">
 
   <CheckBox
     android:id="@+id/selected"
-    android:layout_gravity="center"
     android:layout_width="30dp"
     android:layout_height="30dp"
-    android:visibility="gone"/>
+    android:layout_gravity="center"
+    android:layout_marginLeft="10dp"
+    android:visibility="gone" />
 
   <ImageView
     android:id="@+id/file_image"
@@ -19,7 +21,8 @@
     android:layout_height="40dp"
     android:layout_gravity="center"
     android:layout_margin="5dp"
-    android:layout_weight="1" />
+    android:layout_weight="1"
+    android:src="@drawable/filetype_folder" />
 
   <LinearLayout
     android:layout_width="0dp"

@@ -13,9 +13,13 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.filemanager.Adapter.FileViewAdapter;
@@ -23,6 +27,7 @@ import com.example.filemanager.FileView;
 import com.example.filemanager.R;
 import com.example.filemanager.Utils.FileUtils;
 import com.example.filemanager.Utils.GetFilesUtils;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -32,7 +37,13 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity {
-  public FloatingActionButton fab;
+  private FloatingActionMenu fab;
+  private LinearLayout buttomActionBar; //  底部操作栏
+  private LinearLayout greyCover; //  灰色蒙层
+  private ImageButton cutButton;
+  private ImageButton copyButton;
+  private ImageButton deleteButton;
+
   private String[] permissions = new String[]{
           Manifest.permission.WRITE_EXTERNAL_STORAGE,
           Manifest.permission.READ_EXTERNAL_STORAGE
@@ -50,14 +61,40 @@ public abstract class BaseActivity extends AppCompatActivity {
     setContentView(getLayoutResourceId());
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+
     fab = findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
+    fab.setOnMenuButtonClickListener(new View.OnClickListener() {
       @Override
-      public void onClick(View view) {
+      public void onClick(View v) {
+        if (fab.isOpened()) {
+          greyCover.setVisibility(View.GONE);
+        } else {
+          greyCover.setVisibility(View.VISIBLE);
+        }
+        fab.toggle(true);
+      }
+    });
+
+    buttomActionBar = findViewById(R.id.actionbar_bottom);
+    cutButton = findViewById(R.id.button_cut);
+    copyButton = findViewById(R.id.button_copy);
+    deleteButton = findViewById(R.id.button_delete);
+    greyCover = findViewById(R.id.grey_cover);
+
+    greyCover.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        fab.close(true);
+        greyCover.setVisibility(View.GONE);
+      }
+    });
+
+    deleteButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
         deleteFile();
       }
     });
-    setFabVisibility(View.GONE);
 
     checkPermission();
   }
@@ -78,13 +115,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     //noinspection SimplifiableIfStatement
     switch (id) {
-      case R.id.delete:
-        deleteFile();
-        return true;
       case android.R.id.home:
         if (adapter.leaveSelectMode()) {
           finish();
         }
+        return true;
+      case R.id.cut:
+        findViewById(R.id.actionbar_bottom).setVisibility(View.GONE);
         return true;
       case R.id.sort_by_default:
         if (!item.isChecked()) {
@@ -112,8 +149,6 @@ public abstract class BaseActivity extends AppCompatActivity {
   public void onBackPressed() {
     if (adapter.leaveSelectMode()) {
       super.onBackPressed();
-    } else {
-      setFabVisibility(View.GONE);
     }
   }
 
@@ -134,6 +169,7 @@ public abstract class BaseActivity extends AppCompatActivity {
   }
 
   protected abstract void init();
+
   protected abstract int getLayoutResourceId();
 
   private void checkPermission() {
@@ -156,7 +192,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     fab.setVisibility(visibility);
   }
 
-  public void setFileViewSort(String sort) {
+  public void setButtomActionBarVisibility(int visibility) {
+    buttomActionBar.setVisibility(visibility);
+  }
+
+  private void setFileViewSort(String sort) {
     Collections.sort(fileList, GetFilesUtils.getInstance().fileOrder(sort));
     adapter.notifyDataSetChanged();
   }

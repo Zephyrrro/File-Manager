@@ -1,12 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
-  tools:context="com.example.filemanager.Activity.MainActivity">
+  tools:context="com.example.filemanager.Activity.MainActivity"
+  >
   <item
     android:id="@+id/search"
     android:icon="@drawable/baseline_add_24"
     android:title="@string/toolbar_new"
-    app:showAsAction="ifRoom">
+    app:showAsAction="ifRoom"
+    android:iconTint="@color/colorWhite">
     <menu>
       <item android:id="@+id/new_folder"
             android:title="@string/toolbar_new_folder" />
@@ -27,13 +29,9 @@
         android:id="@+id/paste"
         android:title="@string/paste"/>
   <item
-          android:id="@+id/delete"
-          android:title="@string/delete"/>
-  <item
     android:id="@+id/sort"
     android:orderInCategory="100"
     android:title="排序"
-    
     app:showAsAction="never">
     <menu>
       <group android:checkableBehavior="single">

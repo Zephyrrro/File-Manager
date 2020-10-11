@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- shape的默认形状是rectangle，还有oval(椭圆),line（线）,ring（圆环）-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+  android:shape="rectangle">
+  <!-- 矩形的圆角弧度 -->
+  <corners android:radius="50pt"/>
+  <!-- 矩形的填充色 -->
+  <solid android:color="#FFFFFF"/>
+  <!-- 矩形的内边距 -->
+  <padding android:left="5dp" android:right="5dp" android:top="5dp" android:bottom="5dp"/>
+  <!-- 矩形的边框的宽度 和 颜色 -->
+  <stroke android:width="0dp" />
+</shape>
