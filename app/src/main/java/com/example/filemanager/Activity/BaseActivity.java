@@ -12,34 +12,28 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import com.example.filemanager.Adapter.FileViewAdapter;
 import com.example.filemanager.FileView;
 import com.example.filemanager.R;
+import com.example.filemanager.Utils.DensityUtil;
 import com.example.filemanager.Utils.FileManagerUtils;
 import com.example.filemanager.Utils.FileUtils;
 import com.example.filemanager.Utils.GetFilesUtils;
@@ -57,12 +51,13 @@ import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity {
   private FloatingActionMenu fab;
-  private LinearLayout buttomActionBar; //  底部操作栏
+  private LinearLayout bottomActionBar; //  底部操作栏
   private LinearLayout greyCover; //  灰色蒙层
   private ImageButton cutButton;
   private ImageButton copyButton;
   private ImageButton deleteButton;
   public RecyclerView recyclerView;
+  public RelativeLayout bottomSheetLayout;
 
   private String[] permissions = new String[]{
           Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -88,6 +83,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     LinearLayoutManager layoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+    bottomSheetLayout = findViewById(R.id.bottomSheetLayout);
 
 
     fab = findViewById(R.id.fab);
@@ -189,7 +186,7 @@ public abstract class BaseActivity extends AppCompatActivity {
       }
     });
 
-    buttomActionBar = findViewById(R.id.actionbar_bottom);
+    bottomActionBar = findViewById(R.id.actionbar_bottom);
     cutButton = findViewById(R.id.button_cut);
     copyButton = findViewById(R.id.button_copy);
     deleteButton = findViewById(R.id.button_delete);
@@ -313,7 +310,23 @@ public abstract class BaseActivity extends AppCompatActivity {
 
   public void setButtomActionBarVisibility(int visibility) {
 //    buttomActionBar.setVisibility(visibility);
-    buttomActionBar.setVisibility(View.GONE);
+    bottomActionBar.setVisibility(View.GONE);
+  }
+
+  public void setFloatingMenuVisibility(int visibility) {
+    fab.setVisibility(visibility);
+  }
+
+  public void setSelectModeShow(boolean isSelectMode) {
+    if (isSelectMode) {
+      fab.setVisibility(View.GONE);
+      bottomSheetLayout.setVisibility(View.VISIBLE);
+      recyclerView.setPadding(0, 0, 0, DensityUtil.dip2px(this, 50));
+    } else {
+      fab.setVisibility(View.VISIBLE);
+      bottomSheetLayout.setVisibility(View.GONE);
+      recyclerView.setPadding(0, 0, 0, 0);
+    }
   }
 
 

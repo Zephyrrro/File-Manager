@@ -6,8 +6,8 @@
   android:id="@+id/main_layout"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".Activity.MainActivity"
-  android:animateLayoutChanges="true">
+  android:animateLayoutChanges="true"
+  tools:context=".Activity.MainActivity">
 
   <com.google.android.material.appbar.AppBarLayout
     android:layout_width="match_parent"
@@ -20,24 +20,21 @@
       android:layout_height="?attr/actionBarSize"
       android:background="?attr/colorPrimary"
       android:theme="@style/AppTheme.PopupOverlay"
-<<<<<<< HEAD
-      app:popupTheme="@style/AppTheme.NoActionBar" />
-=======
-    >
+      app:popupTheme="@style/AppTheme.NoActionBar">
+
       <EditText
-              android:id="@+id/search_input"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:visibility="gone"
-              android:layout_margin="4dp"
-              android:hint="@string/search"
-              android:imeOptions="actionSearch"
-              android:inputType="text"
-              android:padding="8dp"
-              android:autofillHints=""/>
+        android:id="@+id/search_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:autofillHints=""
+        android:hint="@string/search"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:padding="8dp"
+        android:visibility="gone" />
     </androidx.appcompat.widget.Toolbar>
 
->>>>>>> main
   </com.google.android.material.appbar.AppBarLayout>
 
 
@@ -48,9 +45,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#99FFFFFF"
-    android:visibility="gone"
     android:clickable="true"
-    android:orientation="horizontal" />
+    android:orientation="horizontal"
+    android:visibility="gone" />
 
   <com.github.clans.fab.FloatingActionMenu
     android:id="@+id/fab"
@@ -84,7 +81,6 @@
       fab:fab_label="新建文件夹"
       fab:fab_size="mini" />
 
-<<<<<<< HEAD
     <com.github.clans.fab.FloatingActionButton
       android:id="@+id/create_file"
       android:layout_width="wrap_content"
@@ -96,8 +92,7 @@
       fab:fab_label="新建文件"
       fab:fab_size="mini" />
   </com.github.clans.fab.FloatingActionMenu>
-=======
+
   <include layout="@layout/bottom_sheet" />
 
->>>>>>> main
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

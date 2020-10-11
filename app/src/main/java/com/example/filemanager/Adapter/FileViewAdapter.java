@@ -175,23 +175,23 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
 
   public void goSelectMode() {
     selectMode = true;
-    for(ViewHolder viewHolder: viewHolders){
+    mContext.setSelectModeShow(true);
+    for (ViewHolder viewHolder : viewHolders) {
       viewHolder.selected.setVisibility(View.VISIBLE);
     }
   }
 
-  public boolean leaveSelectMode(){
-    if(!selectMode){
+  public boolean leaveSelectMode() {
+    if (!selectMode) {
       return false;
     }
     selectMode = false;
-//    mContext.setFabVisibility(View.GONE);
-    mContext.setButtomActionBarVisibility(View.GONE);
+    mContext.setSelectModeShow(false);
     for (ViewHolder viewHolder : viewHolders) {
       viewHolder.selected.setChecked(false);
       viewHolder.selected.setVisibility(View.GONE);
     }
-    return false;
+    return true;
   }
 
   public List<FileView> getSelected() {
@@ -211,9 +211,9 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     return fileList;
   }
 
-  public void addFile(File file){
-    if(fileList.add(new FileView(file))){
-      notifyItemInserted(fileList.size()-1);
+  public void addFile(File file) {
+    if (fileList.add(new FileView(file))) {
+      notifyItemInserted(fileList.size() - 1);
     }
   }
 }
