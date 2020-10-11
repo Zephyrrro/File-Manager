@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/bottomSheetLayout"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@android:color/holo_orange_light"
+                android:padding="@dimen/activity_vertical_margin"
+                app:behavior_hideable="true"
+                app:behavior_peekHeight="@dimen/bottom_sheet_height"
+                app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <LinearLayout
+            android:id="@+id/bottom_tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <ImageButton
+                android:id="@+id/bottom_cut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_input_16"
+                style="@style/Widget.AppCompat.Button.Borderless"/>
+
+        <ImageButton
+                android:id="@+id/bottom_copy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_file_copy_16"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:theme="@style/Theme.AppCompat.Light"/>
+
+        <ImageButton
+                android:id="@+id/bottom_paste"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_move_to_inbox_16"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:theme="@style/Theme.AppCompat.Light"/>
+
+        <ImageButton
+                android:id="@+id/bottom_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_delete_16"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:theme="@style/Theme.AppCompat.Light"/>
+
+    </LinearLayout>
+<!--    <TextView-->
+<!--            android:id="@+id/bottomSheetHeading"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/text_expand_me"-->
+<!--            android:textAppearance="@android:style/TextAppearance.Large" />-->
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bottom_tool_bar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:text="@string/text_welcome_message"
+            android:textAppearance="@android:style/TextAppearance.Large" />
+
+</RelativeLayout>

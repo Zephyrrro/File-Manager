@@ -19,4 +19,12 @@
     <item name="titleTextColor">@color/colorWhite</item>
     <item name="colorControlNormal">@color/colorWhite</item>
   </style>
+    <style name="IconOnlyButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+    <style name="Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

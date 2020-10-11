@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.StrictMode;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.filemanager.Activity.BaseActivity;
-import com.example.filemanager.Activity.ChildActivity;
 import com.example.filemanager.Activity.MainActivity;
+import com.example.filemanager.Activity.SearchActivity;
 import com.example.filemanager.FileView;
 import com.example.filemanager.R;
 import com.example.filemanager.Utils.GetFilesUtils;
@@ -91,7 +90,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
         int position = holder.getAdapterPosition();
         FileView file = fileList.get(position);
         if (file.isFolder()) {
-          Intent intent = new Intent(v.getContext(), ChildActivity.class);
+          Intent intent = new Intent(v.getContext(), MainActivity.class);
           intent.putExtra("path", file.getFilePath().toString());
           v.getContext().startActivity(intent);
         } else {
@@ -133,6 +132,8 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
             viewHolder.selected.setVisibility(View.VISIBLE);
           }
         }
+        goSelectMode();
+        holder.selected.setChecked(true);
         return true;
       }
     });
@@ -162,9 +163,16 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     return this.fileList.size();
   }
 
-  public boolean leaveSelectMode() {
-    if (!selectMode) {
-      return true;
+  public void goSelectMode() {
+    selectMode = true;
+    for(ViewHolder viewHolder: viewHolders){
+      viewHolder.selected.setVisibility(View.VISIBLE);
+    }
+  }
+
+  public boolean leaveSelectMode(){
+    if(!selectMode){
+      return false;
     }
     selectMode = false;
     for (ViewHolder viewHolder : viewHolders) {
@@ -185,5 +193,15 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
       }
     }
     return selectedFileView;
+  }
+
+  public List<FileView> getFileList() {
+    return fileList;
+  }
+
+  public void addFile(File file){
+    if(fileList.add(new FileView(file))){
+      notifyItemInserted(fileList.size()-1);
+    }
   }
 }

@@ -17,7 +17,21 @@
       android:layout_width="match_parent"
       android:layout_height="?attr/actionBarSize"
       android:background="?attr/colorPrimary"
-      android:theme="@style/AppTheme.PopupOverlay" />
+      android:theme="@style/AppTheme.PopupOverlay"
+    >
+      <EditText
+              android:id="@+id/search_input"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:visibility="gone"
+              android:layout_margin="4dp"
+              android:hint="@string/search"
+              android:imeOptions="actionSearch"
+              android:inputType="text"
+              android:padding="8dp"
+              android:autofillHints=""/>
+    </androidx.appcompat.widget.Toolbar>
+
   </com.google.android.material.appbar.AppBarLayout>
 
 
@@ -33,5 +47,7 @@
     android:elevation="10dp"
     android:src="@drawable/delete"
     app:borderWidth="0dp" />
+
+  <include layout="@layout/bottom_sheet" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
