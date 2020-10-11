@@ -5,7 +5,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.StrictMode;
 import android.text.TextUtils;
+
+import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -40,6 +46,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
   private static final String TAG = "FileViewAdapter";
   private List<ViewHolder> viewHolders = new ArrayList<>();
   private Map<String, Integer> fileTypeIconMap = new HashMap<String, Integer>();
+  private BaseActivity mContext;
 
   static class ViewHolder extends RecyclerView.ViewHolder {
     View fileView;
@@ -74,10 +81,10 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     fileTypeIconMap.put("png", R.drawable.filetype_png);
   }
 
-
   @NonNull
   @Override
   public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
+    mContext = (BaseActivity) parent.getContext();
     View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_view_item, parent, false);
     final ViewHolder holder = new ViewHolder(view);
     holder.fileView.setOnClickListener(new View.OnClickListener() {
@@ -127,22 +134,24 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
       public boolean onLongClick(View view) {
         if (!selectMode) {
           selectMode = true;
-          ((BaseActivity) parent.getContext()).setFabVisibility(View.VISIBLE);
+          int position = holder.getAdapterPosition();
+          mContext.setButtomActionBarVisibility(View.VISIBLE);
           for (ViewHolder viewHolder : viewHolders) {
             viewHolder.selected.setVisibility(View.VISIBLE);
           }
+          holder.selected.setChecked(true);
         }
         goSelectMode();
         holder.selected.setChecked(true);
         return true;
       }
     });
-    viewHolders.add(holder);
     return holder;
   }
 
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    Log.d(TAG, "onBindViewHolder Call");
     FileView fileView = fileList.get(position);
     //  TODO: 更多类型的icon
     Integer fileImage = fileTypeIconMap.get(fileView.getFileType());
@@ -151,10 +160,11 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     }
     holder.fileImage.setImageResource(fileImage);
     holder.fileName.setText(fileView.getFileName());
-    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.CHINA);
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
     holder.fileModifiedTime.setText(format.format(new Date(fileView.getFileTime())));
     holder.fileSize.setText(GetFilesUtils.getInstance().getFileSizeStr(fileView.getFileSize()));
     holder.selected.setVisibility(selectMode ? View.VISIBLE : View.GONE);
+    viewHolders.add(holder);
   }
 
 
@@ -165,21 +175,23 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
 
   public void goSelectMode() {
     selectMode = true;
-    for(ViewHolder viewHolder: viewHolders){
+    mContext.setSelectModeShow(true);
+    for (ViewHolder viewHolder : viewHolders) {
       viewHolder.selected.setVisibility(View.VISIBLE);
     }
   }
 
-  public boolean leaveSelectMode(){
-    if(!selectMode){
+  public boolean leaveSelectMode() {
+    if (!selectMode) {
       return false;
     }
     selectMode = false;
+    mContext.setSelectModeShow(false);
     for (ViewHolder viewHolder : viewHolders) {
       viewHolder.selected.setChecked(false);
       viewHolder.selected.setVisibility(View.GONE);
     }
-    return false;
+    return true;
   }
 
   public List<FileView> getSelected() {
@@ -199,9 +211,11 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     return fileList;
   }
 
-  public void addFile(File file){
-    if(fileList.add(new FileView(file))){
-      notifyItemInserted(fileList.size()-1);
+  public void addFile(File file) {
+    if (fileList.add(new FileView(file))) {
+      notifyItemInserted(fileList.size() - 1);
     }
   }
 }
+
+

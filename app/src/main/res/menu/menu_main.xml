@@ -1,24 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
-  tools:context="com.example.filemanager.Activity.MainActivity">
+  tools:context="com.example.filemanager.Activity.MainActivity"
+  >
   <item
       android:id="@+id/search"
       android:title="@string/toolbar_new"
       app:showAsAction="ifRoom"
       android:icon="@drawable/ic_baseline_search_24">
-  </item>
-  <item
-    android:id="@+id/create"
-    android:title="@string/toolbar_new"
-    android:icon="@drawable/ic_baseline_search_24">
-
-    <menu>
-      <item android:id="@+id/new_folder"
-            android:title="@string/toolbar_new_folder" />
-      <item android:id="@+id/new_txt"
-            android:title="@string/toolbar_new_txt" />
-    </menu>
   </item>
   <item
           android:id="@+id/select_all"
@@ -33,13 +22,9 @@
         android:id="@+id/paste"
         android:title="@string/paste"/>
   <item
-          android:id="@+id/delete"
-          android:title="@string/delete"/>
-  <item
     android:id="@+id/sort"
     android:orderInCategory="100"
     android:title="排序"
-    
     app:showAsAction="never">
     <menu>
       <group android:checkableBehavior="single">

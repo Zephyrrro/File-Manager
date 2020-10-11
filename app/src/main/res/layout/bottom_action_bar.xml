@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/actionbar_bottom"
+  android:layout_width="match_parent"
+  android:layout_height="60dp"
+  android:layout_gravity="bottom"
+  android:background="@drawable/bottom_bar_border"
+  android:orientation="horizontal"
+  android:paddingLeft="10dp"
+  android:paddingTop="2dp"
+  android:visibility="gone">
+
+  <ImageButton
+    android:id="@+id/button_cut"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_gravity="center_vertical"
+    android:layout_marginHorizontal="10dp"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:padding="5dp"
+    android:scaleType="centerCrop"
+    android:src="@drawable/cut" />
+
+  <ImageButton
+    android:id="@+id/button_copy"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_gravity="center_vertical"
+    android:layout_marginHorizontal="10dp"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:padding="7dp"
+    android:scaleType="centerCrop"
+    android:src="@drawable/copy" />
+
+  <ImageButton
+    android:id="@+id/button_delete"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_gravity="center_vertical"
+    android:layout_marginHorizontal="10dp"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:padding="7dp"
+    android:scaleType="centerCrop"
+    android:src="@drawable/delete" />
+</LinearLayout>
