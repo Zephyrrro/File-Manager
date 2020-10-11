@@ -14,7 +14,9 @@
 
   <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-  <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">    <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
+  <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
     <item name="overlapAnchor">false</item>
+    <item name="titleTextColor">@color/colorWhite</item>
+    <item name="colorControlNormal">@color/colorWhite</item>
   </style>
 </resources>

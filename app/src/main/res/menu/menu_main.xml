@@ -4,7 +4,7 @@
   tools:context="com.example.filemanager.Activity.MainActivity">
   <item
     android:id="@+id/search"
-    android:icon="@drawable/filetype_folder"
+    android:icon="@drawable/baseline_add_24"
     android:title="@string/toolbar_new"
     app:showAsAction="ifRoom">
     <menu>
@@ -33,6 +33,7 @@
     android:id="@+id/sort"
     android:orderInCategory="100"
     android:title="排序"
+    
     app:showAsAction="never">
     <menu>
       <group android:checkableBehavior="single">

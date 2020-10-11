@@ -4,13 +4,16 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.filemanager.FileView;
+import com.example.filemanager.R;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GetFilesUtils {
 
