@@ -135,7 +135,6 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
         if (!selectMode) {
           selectMode = true;
           int position = holder.getAdapterPosition();
-          mContext.setButtomActionBarVisibility(View.VISIBLE);
           for (ViewHolder viewHolder : viewHolders) {
             viewHolder.selected.setVisibility(View.VISIBLE);
           }
