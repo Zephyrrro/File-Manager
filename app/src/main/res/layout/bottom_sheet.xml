@@ -1,69 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:id="@+id/bottomSheetLayout"
   android:layout_width="match_parent"
-  android:layout_height="300dp"
-  android:background="@android:color/holo_orange_light"
-  android:padding="@dimen/activity_vertical_margin"
-  android:visibility="gone"
+  android:layout_height="50dp"
+  android:layout_gravity="bottom"
+  android:background="@color/colorWhite"
+  android:elevation="5dp"
+  android:gravity="center"
+  android:orientation="horizontal"
+  android:paddingHorizontal="10dp"
+  app:behavior_draggable="false"
   app:behavior_hideable="true"
-  app:behavior_peekHeight="@dimen/bottom_sheet_height"
+  app:behavior_peekHeight="0dp"
   app:layout_behavior="@string/bottom_sheet_behavior">
 
+  <ImageButton
+    android:id="@+id/bottom_cut"
+    style="@style/Widget.AppCompat.Button.Borderless"
+    android:layout_width="0dp"
+    android:layout_height="45dp"
+    android:layout_gravity="center_vertical"
+    android:layout_marginHorizontal="10dp"
+    android:layout_weight="1"
+    android:adjustViewBounds="true"
+    android:scaleType="fitCenter"
+    android:src="@drawable/cut" />
 
-  <LinearLayout
-    android:id="@+id/bottom_tool_bar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+  <ImageButton
+    android:id="@+id/bottom_copy"
+    style="@style/Widget.AppCompat.Button.Borderless"
+    android:layout_width="0dp"
+    android:layout_height="45dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_weight="1"
+    android:adjustViewBounds="true"
+    android:scaleType="fitCenter"
+    android:src="@drawable/copy" />
 
-    <ImageButton
-      android:id="@+id/bottom_cut"
-      style="@style/Widget.AppCompat.Button.Borderless"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:src="@drawable/ic_baseline_input_16" />
+  <ImageButton
+    android:id="@+id/bottom_paste"
+    style="@style/Widget.AppCompat.Button.Borderless"
+    android:layout_width="0dp"
+    android:layout_height="45dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_weight="1"
+    android:adjustViewBounds="true"
+    android:scaleType="fitCenter"
+    android:src="@drawable/move" />
 
-    <ImageButton
-      android:id="@+id/bottom_copy"
-      style="@style/Widget.AppCompat.Button.Borderless"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:src="@drawable/ic_baseline_file_copy_16"
-      android:theme="@style/Theme.AppCompat.Light" />
+  <ImageButton
+    android:id="@+id/bottom_delete"
+    style="@style/Widget.AppCompat.Button.Borderless"
+    android:layout_width="0dp"
+    android:layout_height="45dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_weight="1"
+    android:adjustViewBounds="true"
+    android:scaleType="fitCenter"
+    android:src="@drawable/delete" />
 
-    <ImageButton
-      android:id="@+id/bottom_paste"
-      style="@style/Widget.AppCompat.Button.Borderless"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:src="@drawable/ic_baseline_move_to_inbox_16"
-      android:theme="@style/Theme.AppCompat.Light" />
+</LinearLayout>
 
-    <ImageButton
-      android:id="@+id/bottom_delete"
-      style="@style/Widget.AppCompat.Button.Borderless"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:src="@drawable/ic_baseline_delete_16"
-      android:theme="@style/Theme.AppCompat.Light" />
-
-  </LinearLayout>
-  <!--    <TextView-->
-  <!--            android:id="@+id/bottomSheetHeading"-->
-  <!--            android:layout_width="match_parent"-->
-  <!--            android:layout_height="wrap_content"-->
-  <!--            android:text="@string/text_expand_me"-->
-  <!--            android:textAppearance="@android:style/TextAppearance.Large" />-->
-
-  <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/bottom_tool_bar"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="@dimen/activity_horizontal_margin"
-    android:text="@string/text_welcome_message"
-    android:textAppearance="@android:style/TextAppearance.Large" />
-
-</RelativeLayout>
