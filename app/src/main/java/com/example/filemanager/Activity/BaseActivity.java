@@ -1,6 +1,7 @@
 package com.example.filemanager.Activity;
 
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,6 +40,7 @@ import com.example.filemanager.Utils.FileUtils;
 import com.example.filemanager.Utils.GetFilesUtils;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.clans.fab.FloatingActionButton;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
@@ -57,7 +59,8 @@ public abstract class BaseActivity extends AppCompatActivity {
   private ImageButton copyButton;
   private ImageButton deleteButton;
   public RecyclerView recyclerView;
-  public RelativeLayout bottomSheetLayout;
+  public LinearLayout bottomSheetLayout;
+  public BottomSheetBehavior bottomSheetBehavior;
 
   private String[] permissions = new String[]{
           Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -85,7 +88,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
     bottomSheetLayout = findViewById(R.id.bottomSheetLayout);
-
+    bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
 
     fab = findViewById(R.id.fab);
     fab.setOnMenuButtonClickListener(new View.OnClickListener() {
@@ -210,12 +213,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     setBottomSheet();
   }
 
-  private void setBottomSheet(){
+  private void setBottomSheet() {
     findViewById(R.id.bottom_delete).setOnClickListener(view -> deleteFile());
     findViewById(R.id.bottom_cut).setOnClickListener(view -> cutOrCopyFile(true));
     findViewById(R.id.bottom_copy).setOnClickListener(view -> cutOrCopyFile(false));
     findViewById(R.id.bottom_paste).setOnClickListener(view -> pasteFile());
   }
+
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
@@ -281,7 +285,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
-  protected void init(){
+  protected void init() {
     Intent intent = getIntent();
     path = intent.getStringExtra("path");
 
@@ -320,12 +324,14 @@ public abstract class BaseActivity extends AppCompatActivity {
   public void setSelectModeShow(boolean isSelectMode) {
     if (isSelectMode) {
       fab.setVisibility(View.GONE);
+      recyclerView.setPadding(0, 0, 0, DensityUtil.dip2px(this, 48));
       bottomSheetLayout.setVisibility(View.VISIBLE);
-      recyclerView.setPadding(0, 0, 0, DensityUtil.dip2px(this, 50));
+      bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     } else {
       fab.setVisibility(View.VISIBLE);
-      bottomSheetLayout.setVisibility(View.GONE);
       recyclerView.setPadding(0, 0, 0, 0);
+      bottomSheetLayout.setVisibility(View.GONE);
+      bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
   }
 
@@ -340,9 +346,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     greyCover.setVisibility(View.GONE);
   }
 
-  private void cutOrCopyFile(boolean isCut){
+  private void cutOrCopyFile(boolean isCut) {
     List<Path> fileList = new ArrayList<>();
-    for(FileView fileView:adapter.getSelected()){
+    for (FileView fileView : adapter.getSelected()) {
       fileList.add(fileView.getFilePath());
     }
     if (isCut) {
@@ -352,7 +358,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
-  private void pasteFile(){
+  private void pasteFile() {
     try {
       FileManagerUtils.Instance.paste(Paths.get(path));
     } catch (IOException e) {
