@@ -1,17 +1,13 @@
 package com.example.filemanager.Adapter;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.StrictMode;
 import android.text.TextUtils;
-
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -19,33 +15,28 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.filemanager.Activity.BaseActivity;
 import com.example.filemanager.Activity.MainActivity;
-import com.example.filemanager.Activity.SearchActivity;
 import com.example.filemanager.FileView;
+import com.example.filemanager.ItemTouchCallBack;
 import com.example.filemanager.R;
 import com.example.filemanager.Utils.GetFilesUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
-public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHolder> {
+public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHolder> implements ItemTouchCallBack.OnItemTouchListener {
+  private boolean showExt;
   private boolean selectMode;
   private List<FileView> fileList;
   private static final String TAG = "FileViewAdapter";
   private List<ViewHolder> viewHolders = new ArrayList<>();
-  private Map<String, Integer> fileTypeIconMap = new HashMap<String, Integer>();
+  private Map<String, Integer> fileTypeIconMap = new HashMap<>();
   private BaseActivity mContext;
 
   static class ViewHolder extends RecyclerView.ViewHolder {
@@ -81,49 +72,55 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     fileTypeIconMap.put("png", R.drawable.filetype_png);
   }
 
+  int fromPosition = -1;
+  int toPosition = -1;
+
+  @Override
+  public void onMove(int fromPosition, int toPosition) {
+    this.fromPosition = fromPosition;
+    this.toPosition = toPosition;
+  }
+
   @NonNull
   @Override
   public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
-    mContext = (BaseActivity) parent.getContext();
+    mContext = (BaseActivity) parent.getContext() ;
     View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_view_item, parent, false);
     final ViewHolder holder = new ViewHolder(view);
-    holder.fileView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if (selectMode) {
-          holder.selected.setChecked(!holder.selected.isChecked());
-          return;
-        }
-        int position = holder.getAdapterPosition();
-        FileView file = fileList.get(position);
-        if (file.isFolder()) {
-          Intent intent = new Intent(v.getContext(), MainActivity.class);
-          intent.putExtra("path", file.getFilePath().toString());
-          v.getContext().startActivity(intent);
-        } else {
-          boolean isNeedMatch = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
-          StrictMode.VmPolicy defaultVmPolicy = null;
-          try {
-            if (isNeedMatch) {
-              defaultVmPolicy = StrictMode.getVmPolicy();
-              StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-              StrictMode.setVmPolicy(builder.build());
-            }
-            MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-            String mime = mimeTypeMap.getMimeTypeFromExtension(file.getFileType());
-            mime = TextUtils.isEmpty(mime) ? "" : mime;
-            Intent intent = new Intent();
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(file.getFilePath().toString())), mime);
-            v.getContext().startActivity(intent);
-          } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(v.getContext(), "无法打开", Toast.LENGTH_SHORT).show();
-          } finally {
-            if (isNeedMatch) {
-              StrictMode.setVmPolicy(defaultVmPolicy);
-            }
+    holder.fileView.setOnClickListener(v -> {
+      if (selectMode) {
+        holder.selected.setChecked(!holder.selected.isChecked());
+        return;
+      }
+      int position = holder.getAdapterPosition();
+      FileView file = fileList.get(position);
+      if (file.isFolder()) {
+        Intent intent = new Intent(v.getContext(), MainActivity.class);
+        intent.putExtra("path", file.getFile().toString());
+        v.getContext().startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(mContext).toBundle());
+      } else {
+        boolean isNeedMatch = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+        StrictMode.VmPolicy defaultVmPolicy = null;
+        try {
+          if (isNeedMatch) {
+            defaultVmPolicy = StrictMode.getVmPolicy();
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+          }
+          MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+          String mime = mimeTypeMap.getMimeTypeFromExtension(file.getFileType());
+          mime = TextUtils.isEmpty(mime) ? "" : mime;
+          Intent intent = new Intent();
+          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          intent.setAction(Intent.ACTION_VIEW);
+          intent.setDataAndType(Uri.fromFile(new File(file.getFile().toString())), mime);
+          v.getContext().startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(mContext).toBundle());
+        } catch (Exception e) {
+          e.printStackTrace();
+          Toast.makeText(v.getContext(), "无法打开", Toast.LENGTH_SHORT).show();
+        } finally {
+          if (isNeedMatch) {
+            StrictMode.setVmPolicy(defaultVmPolicy);
           }
         }
       }
@@ -140,13 +137,14 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
           }
           holder.selected.setChecked(true);
         }
-        goSelectMode();
+        goSelectMode(); //TODO
         holder.selected.setChecked(true);
         return true;
       }
     });
     return holder;
   }
+
 
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
@@ -158,7 +156,11 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
       fileImage = fileTypeIconMap.get("unknown");
     }
     holder.fileImage.setImageResource(fileImage);
-    holder.fileName.setText(fileView.getFileName());
+    String fileName = fileView.getFileName();
+    if(!showExt && !fileView.isFolder() && fileName.indexOf(".") > 0){
+      fileName = fileName.substring(0,fileName.lastIndexOf("."));
+    }
+    holder.fileName.setText(fileName);
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
     holder.fileModifiedTime.setText(format.format(new Date(fileView.getFileTime())));
     holder.fileSize.setText(GetFilesUtils.getInstance().getFileSizeStr(fileView.getFileSize()));
@@ -214,6 +216,26 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     if (fileList.add(new FileView(file))) {
       notifyItemInserted(fileList.size() - 1);
     }
+  }
+
+  public boolean isShowExt() {
+    return showExt;
+  }
+
+  public void setShowExt(boolean showExt) {
+    this.showExt = showExt;
+  }
+
+  public int getFromPosition() {
+    return fromPosition;
+  }
+
+  public int getToPosition() {
+    return toPosition;
+  }
+
+  public void setFromPosition(int fromPosition) {
+    this.fromPosition = fromPosition;
   }
 }
 

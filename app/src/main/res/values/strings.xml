@@ -24,5 +24,6 @@
   <string name="search">搜索当前文件夹</string>
   <string name="text_expand_me">展开</string>
   <string name="text_welcome_message">Hello</string>
+  <string name="showExt">显示拓展名</string>
 
 </resources>

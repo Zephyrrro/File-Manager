@@ -3,13 +3,18 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
 
+    dataBinding {
+        enabled = true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     defaultConfig {
         applicationId "com.example.filemanager"
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -34,6 +39,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.slice:slice-builders:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

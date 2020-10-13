@@ -11,7 +11,7 @@ public class FileView {
   private String fileName;
   private Boolean isFolder;
   private String fileType;
-  private Path filePath;
+  private File file;
   private long fileSize;
   private long fileTime;
 
@@ -27,7 +27,7 @@ public class FileView {
       this.isFolder = false;
       this.fileType = getFileType(file.getName());
     }
-    this.filePath = file.toPath();
+    this.file = file;
     this.fileSize = file.length();
     this.fileTime = file.lastModified();
   }
@@ -54,8 +54,8 @@ public class FileView {
     return fileType;
   }
 
-  public Path getFilePath() {
-    return filePath;
+  public File getFile() {
+    return file;
   }
 
   public long getFileSize() {

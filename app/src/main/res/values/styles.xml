@@ -5,6 +5,11 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <!--activity进入动画-->
+    <item name="android:windowEnterTransition">@transition/slide_right</item>
+    <!--activity退出动画-->
+    <item name="android:windowExitTransition">@transition/slide_left</item>
+    <!--是否同时执行，如果同时执行A页面动画还没退出,B页面已经开始动画,感觉不是很和谐-->
   </style>
 
   <style name="AppTheme.NoActionBar">

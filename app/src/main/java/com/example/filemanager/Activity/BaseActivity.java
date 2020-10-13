@@ -2,6 +2,9 @@ package com.example.filemanager.Activity;
 
 import android.content.Intent;
 
+import android.transition.Slide;
+import android.transition.TransitionInflater;
+import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,15 +22,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +41,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +69,7 @@ public abstract class BaseActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
     setContentView(getLayoutResourceId());
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -98,7 +95,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     findViewById(R.id.bottom_paste).setOnClickListener(view -> pasteFile());
   }
 
-  private void  setFloatingMenu() {
+  private void setFloatingMenu() {
     fab = findViewById(R.id.fab);
     greyCover = findViewById(R.id.grey_cover);
 
@@ -131,12 +128,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     int id = item.getItemId();
 
     switch (id) {
+      case R.id.show_ext:
+        item.setChecked(!item.isChecked());
+        adapter.setShowExt(item.isChecked());
+        return true;
       case android.R.id.home:
         if (!adapter.leaveSelectMode()) {
           if (fab.isOpened()) {
             closeFloatingMenu();
           } else {
-            finish();
+            finishAfterTransition();
           }
         }
         return true;
@@ -179,7 +180,7 @@ public abstract class BaseActivity extends AppCompatActivity {
           init();
         } else {
           Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
-          finish();
+          finishAfterTransition();
         }
         break;
       default:
@@ -194,6 +195,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     RecyclerView recyclerView = findViewById(R.id.file_container);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+
   }
 
   protected abstract int getLayoutResourceId();
@@ -244,9 +247,9 @@ public abstract class BaseActivity extends AppCompatActivity {
   }
 
   private void cutOrCopyFile(boolean isCut) {
-    List<Path> fileList = new ArrayList<>();
+    List<File> fileList = new ArrayList<>();
     for (FileView fileView : adapter.getSelected()) {
-      fileList.add(fileView.getFilePath());
+      fileList.add(fileView.getFile());
     }
     if (isCut) {
       FileManagerUtils.Instance.cut(fileList);
@@ -257,7 +260,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
   private void pasteFile() {
     try {
-      FileManagerUtils.Instance.paste(Paths.get(path));
+      FileManagerUtils.Instance.paste(new File(path));
+      // TODO refresh
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -271,17 +275,15 @@ public abstract class BaseActivity extends AppCompatActivity {
             .setNegativeButton("确定", new DialogInterface.OnClickListener() {
               @Override
               public void onClick(DialogInterface dialogInterface, int i) {
-                try {
-                  for (FileView fileView : selected) {
-                    FileManagerUtils.Instance.delete(fileView.getFilePath());
-                    adapter.getFileList().remove(fileView);
+                for (FileView fileView : selected) {
+                  if(!FileManagerUtils.Instance.delete(fileView.getFile())){
+                    Snackbar.make(findViewById(R.id.main_layout), "删除文件失败", 3000).show();
+                    return;
                   }
-                  adapter.notifyDataSetChanged();
-                  Snackbar.make(findViewById(R.id.main_layout), "Deleted!", 3000).show();
-                } catch (IOException e) {
-                  Log.d(TAG, "onClick: " + e.getMessage());
-                  Snackbar.make(findViewById(R.id.main_layout), "删除文件失败，原因：" + e.getMessage(), 3000).show();
+                  adapter.getFileList().remove(fileView);
                 }
+                  adapter.notifyDataSetChanged();
+                  Snackbar.make(findViewById(R.id.main_layout), "删除文件成功", 3000).show();
               }
             })
             .setPositiveButton("取消", new DialogInterface.OnClickListener() {
@@ -291,6 +293,7 @@ public abstract class BaseActivity extends AppCompatActivity {
               }
             }).show();
   }
+
 
   private void createFileOrDir(String path, boolean isDirectory) {
     closeFloatingMenu();
@@ -368,4 +371,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.orangeDark));
     dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
   }
+
+
 }
+

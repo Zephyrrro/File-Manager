@@ -1,22 +1,15 @@
 package com.example.filemanager.Activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.filemanager.Adapter.FileViewAdapter;
-import com.example.filemanager.FileView;
 import com.example.filemanager.R;
 import com.example.filemanager.Utils.FileManagerUtils;
-import com.example.filemanager.Utils.GetFilesUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -76,7 +69,7 @@ public class SearchActivity extends BaseActivity {
     if(StringUtils.isBlank(searchInput.getText())){
       return;
     }
-    FileManagerUtils.Instance.searchFiles(Paths.get(path),searchInput.getText().toString(), file -> {
+    FileManagerUtils.Instance.searchFiles(new File(path),searchInput.getText().toString(), file -> {
       runOnUiThread(() -> adapter.addFile(file));
     });
   }

@@ -22,6 +22,11 @@
         android:id="@+id/paste"
         android:title="@string/paste"/>
   <item
+          android:id="@+id/show_ext"
+          android:title="@string/showExt"
+          android:checkable="true"/>
+
+  <item
     android:id="@+id/sort"
     android:orderInCategory="100"
     android:title="排序"
