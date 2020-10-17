@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     dataBinding {
         enabled = true
@@ -28,7 +28,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion '29.0.2'
+    buildToolsVersion '30.0.2'
 }
 
 dependencies {
