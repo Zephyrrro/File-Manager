@@ -109,7 +109,7 @@ public class MainActivity extends BaseActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == R.id.search) {
       Intent intent = new Intent(this, SearchActivity.class);
-      intent.putExtra("path", GetFilesUtils.getInstance().getBasePath());
+      intent.putExtra("path", path);
       startActivity(intent);
       return true;
     }

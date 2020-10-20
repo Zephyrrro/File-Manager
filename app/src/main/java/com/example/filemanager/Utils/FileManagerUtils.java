@@ -1,5 +1,6 @@
 package com.example.filemanager.Utils;
 
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 
@@ -78,17 +79,25 @@ public class FileManagerUtils {
     return FileUtils.deleteQuietly(file);
   }
 
-  public void searchFiles(File currentPath, final String keyword, SearchFoundFile searchFoundFile) {
+  public void searchFiles(AsyncTask asyncTask, File currentPath, final String keyword, SearchFoundFile searchFoundFile) {
+    if(asyncTask.isCancelled()){
+      //搜索 被人为终止了
+      return;
+    }
     File[] files = currentPath.listFiles();
     if (ArrayUtils.isEmpty(files)) {
       return;
     }
     for (File file : files) {
+      if(asyncTask.isCancelled()){
+        //搜索 被人为终止了
+        return;
+      }
       if (file.getName().contains(keyword)) {
         searchFoundFile.onFoundFile(file);
       }
       if (file.isDirectory()) {
-        searchFiles(file, keyword, searchFoundFile);
+        searchFiles(asyncTask, file, keyword, searchFoundFile);
       }
     }
   }

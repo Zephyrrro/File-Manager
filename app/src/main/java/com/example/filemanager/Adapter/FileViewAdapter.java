@@ -224,6 +224,10 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
       notifyItemInserted(fileList.size() - 1);
     }
   }
+  public void clearFiles(){
+    fileList.clear();
+    notifyDataSetChanged();
+  }
 
   public boolean isShowExt() {
     return showExt;
