@@ -32,18 +32,20 @@
         android:imeOptions="actionSearch"
         android:inputType="text"
         android:padding="8dp"
+        android:textColor="@color/colorWhite"
+        android:theme="@style/SearchEditText"
         android:visibility="gone" />
     </androidx.appcompat.widget.Toolbar>
 
     <ProgressBar
-            android:id="@+id/progress"
-            android:layout_marginTop="-7dp"
-            android:layout_marginBottom="-7dp"
-            android:indeterminate="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal" />
+      android:id="@+id/progress"
+      style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom"
+      android:layout_marginBottom="-7dp"
+      android:indeterminate="true"
+      android:visibility="gone" />
 
   </com.google.android.material.appbar.AppBarLayout>
 

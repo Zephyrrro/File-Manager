@@ -45,43 +45,47 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class BaseActivity extends AppCompatActivity {
-  private FloatingActionMenu fab;
-  private LinearLayout greyCover; //  灰色蒙层
+  private FloatingActionMenu fab;                     //  右下悬浮按钮
+  private LinearLayout greyCover;                     //  灰色蒙层
   public RecyclerView recyclerView;
   public LinearLayout bottomSheetLayout;
-  public BottomSheetBehavior bottomSheetBehavior;
+  public BottomSheetBehavior bottomSheetBehavior;     //  底部操作栏
 
-  private String[] permissions = new String[]{
+  private final String[] permissions = new String[]{  //  应用所需权限
           Manifest.permission.WRITE_EXTERNAL_STORAGE,
           Manifest.permission.READ_EXTERNAL_STORAGE
   };
-  private List<String> mPermissionList = new ArrayList<>();
-  protected String path;
+  private final List<String> mPermissionList = new ArrayList<>(); //  已同意的权限
+  protected String path;            //  当前文件树结点的路径
   public FileViewAdapter adapter;
-  public List<FileView> fileList;
+  public List<FileView> fileList;   //  文件列表
 
-
-  private static final String TAG = "BaseActivity";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    //  设置布局
     setContentView(getLayoutResourceId());
+    //  开启Toolbar功能
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
+    //  文件列表视图初始化
     recyclerView = findViewById(R.id.file_container);
     LinearLayoutManager layoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
+    //  底部操作栏初始化
     bottomSheetLayout = findViewById(R.id.bottomSheetLayout);
     bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
 
-
+    //  检查权限，若权限全同意则执行 init 方法
     checkPermission();
+    //  设置底部操作栏各个按钮的点击回调
     setBottomSheet();
+    //  设置右下悬浮按钮的点击回调
     setFloatingMenu();
   }
 
@@ -111,6 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     createDirBtn.setOnClickListener(view -> createFileOrDirBtnCallback(true));
     createFileBtn.setOnClickListener(view -> createFileOrDirBtnCallback(false));
 
+    //  点击灰色蒙层时关闭 FloatingActionMenu
     greyCover.setOnClickListener(view -> closeFloatingMenu());
   }
 
@@ -169,6 +174,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
+    //  根据当前状态确定 back 键的功能
     if (!adapter.leaveSelectMode()) {
       if (fab.isOpened()) {
         closeFloatingMenu();
@@ -180,31 +186,25 @@ public abstract class BaseActivity extends AppCompatActivity {
 
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    switch (requestCode) {
-      case 1:
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-          init();
-        } else {
-          Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
-          finishAfterTransition();
-        }
-        break;
-      default:
-        break;
+    if (requestCode == 1) {
+      if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+        init();
+      } else {
+        Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
+        finishAfterTransition();
+      }
     }
   }
 
   protected void init() {
     Intent intent = getIntent();
     path = intent.getStringExtra("path");
+    //  path 为 null，代表当前节点为根节点，path 更改为根路径
     if (path == null) {
       path = GetFilesUtils.getInstance().getBasePath();
     }
 
-    RecyclerView recyclerView = findViewById(R.id.file_container);
-    recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
+    //  BFS遍历一层节点并渲染
     this.fileList = GetFilesUtils.getInstance().getChildNode(path);
     adapter = new FileViewAdapter(this.fileList);
     recyclerView.setAdapter(adapter);
@@ -220,6 +220,7 @@ public abstract class BaseActivity extends AppCompatActivity {
       }
     }
 
+    //  未同意权限则请求权限，否则直接执行 init 方法
     if (!mPermissionList.isEmpty()) {
       String[] permissions1 = mPermissionList.toArray(new String[0]);
       ActivityCompat.requestPermissions(this, permissions1, 1);
@@ -228,10 +229,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
-  public void setFloatingMenuVisibility(int visibility) {
-    fab.setVisibility(visibility);
-  }
-
+  //  设置多选模式下的UI
   public void setSelectModeShow(boolean isSelectMode) {
     if (isSelectMode) {
       fab.setVisibility(View.GONE);
@@ -246,7 +244,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
-
+  //  设置文件排序
   private void setFileViewSort(String sort) {
     Collections.sort(this.fileList, GetFilesUtils.getInstance().fileOrder(sort));
     adapter.notifyDataSetChanged();
@@ -257,6 +255,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     greyCover.setVisibility(View.GONE);
   }
 
+  /**
+   * 剪切或复制文件，剪切文件则将文件从 UI 中删除
+   *
+   * @param isCut 是否为剪切操作
+   */
   private void cutOrCopyFile(boolean isCut) {
     Set<FileView> selected = adapter.getSelectSet();
     List<FileView> fileList = new ArrayList<>(selected);
@@ -286,44 +289,39 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
+  //  删除文件前弹窗确认操作，确认后执行删除操作
   private void deleteFile() {
     final Set<FileView> selected = adapter.getSelectSet();
     final Context context = this;
     new AlertDialog.Builder(this)
             .setTitle("删除文件")
             .setMessage("你确定要删除" + selected.size() + "个文件/文件夹？此操作无法撤销。")
-            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialogInterface, int i) {
-                for (FileView fileView : selected) {
-                  if (!FileManagerUtils.Instance.delete(fileView.getFile())) {
-                    Toast.makeText(context, "删除文件失败", Toast.LENGTH_SHORT).show();
-                    return;
-                  }
-                  fileList.remove(fileView);
+            .setNegativeButton("确定", (dialogInterface, i) -> {
+              //  遍历勾选文件列表，逐个删除文件
+              for (FileView fileView : selected) {
+                if (!FileManagerUtils.Instance.delete(fileView.getFile())) {
+                  Toast.makeText(context, "删除文件失败", Toast.LENGTH_SHORT).show();
+                  return;
                 }
-                adapter.notifyOperationFinish();
-                Toast.makeText(context, "删除文件成功", Toast.LENGTH_SHORT).show();
+                fileList.remove(fileView);
               }
+              adapter.notifyOperationFinish();
+              Toast.makeText(context, "删除文件成功", Toast.LENGTH_SHORT).show();
             })
-            .setPositiveButton("取消", new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialogInterface, int i) {
+            .setPositiveButton("取消", (dialogInterface, i) -> {
 
-              }
             }).show();
   }
 
-
+  //  创建文件或文件夹
   private void createFileOrDir(String path, boolean isDirectory) {
     closeFloatingMenu();
-    File file = new File(path);
     if (isDirectory) {
       boolean result = FileManagerUtils.Instance.createDirectory(path);
       if (result) {
         Toast.makeText(this, "创建成功", Toast.LENGTH_SHORT).show();
       } else {
-        Toast.makeText(this, "创建失败", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "创建失败，可能存在同名文件夹", Toast.LENGTH_SHORT).show();
         return;
       }
     } else {
@@ -332,7 +330,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (result) {
           Toast.makeText(this, "创建成功", Toast.LENGTH_SHORT).show();
         } else {
-          Toast.makeText(this, "创建失败", Toast.LENGTH_SHORT).show();
+          Toast.makeText(this, "创建失败可能存在同名文件", Toast.LENGTH_SHORT).show();
           return;
         }
       } catch (IOException e) {
@@ -340,6 +338,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return;
       }
     }
+    //  创建成功，更新 UI，并滑动到新建的文件/文件夹位置
     FileView fileView = new FileView(new File(path));
     fileList.add(fileView);
     adapter.notifyOperationFinish();
@@ -352,6 +351,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
+  //  创建文件/文件夹按钮的回调，创建一个弹窗
   private void createFileOrDirBtnCallback(boolean isDirectory) {
     final View dialogView = LayoutInflater.from(BaseActivity.this)
             .inflate(R.layout.input_dialog, null);
@@ -362,29 +362,20 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     final AlertDialog dialog =
             new AlertDialog.Builder(BaseActivity.this).setTitle(isDirectory ? "创建一个文件夹" : "创建一个空白文件").setView(dialogView).setPositiveButton(
-                    "确定", null).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-              }
+                    "确定", null).setNegativeButton("取消", (dialog1, which) -> {
             }).create();
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
-        Button positiveBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        positiveBtn.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            String name = editText.getText().toString().trim();
-            if (TextUtils.isEmpty(name)) {
-              Toast.makeText(BaseActivity.this, "名称不能为空", Toast.LENGTH_SHORT).show();
-            } else {
-              String newPath = path + "/" + name;
-              createFileOrDir(newPath, isDirectory);
-              dialog.dismiss();
-            }
-          }
-        });
-      }
+    dialog.setOnShowListener(dialogInterface -> {
+      Button positiveBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+      positiveBtn.setOnClickListener(v -> {
+        String name = editText.getText().toString().trim();
+        if (TextUtils.isEmpty(name)) {
+          Toast.makeText(BaseActivity.this, "名称不能为空", Toast.LENGTH_SHORT).show();
+        } else {
+          String newPath = path + "/" + name;
+          createFileOrDir(newPath, isDirectory);
+          dialog.dismiss();
+        }
+      });
     });
     dialog.show();
     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.orangeDark));

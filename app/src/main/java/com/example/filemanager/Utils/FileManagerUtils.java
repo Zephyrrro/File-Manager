@@ -27,7 +27,6 @@ import java.util.concurrent.*;
  */
 public class FileManagerUtils {
   public static final FileManagerUtils Instance = new FileManagerUtils();
-  private static final String TAG = "FileManagerUtils";
 
   private FileManagerUtils() {
 
@@ -37,12 +36,8 @@ public class FileManagerUtils {
     void onFoundFile(File file);
   }
 
-  private List<FileView> paths;
-  private boolean doCut;
-
-  public boolean canPaste() {
-    return paths != null && paths.size() > 0;
-  }
+  private List<FileView> paths; //  剪切或复制的文件，即剪切板
+  private boolean doCut;        //  剪切或复制的标记位
 
   public void cut(List<FileView> paths) {
     this.paths = paths;
@@ -71,19 +66,22 @@ public class FileManagerUtils {
       FileView newFileView = new FileView(new File(targetPath + "/" + file.getFileName()));
       result.add(newFileView);
     }
-    this.paths = null;
-    return result;
+    this.paths = null;  //  清空剪切板
+    return result;      //  返回成功粘贴的文件
   }
 
+  //  删除文件
   public boolean delete(File file) {
     return FileUtils.deleteQuietly(file);
   }
 
+  //  文件递归搜索
   public void searchFiles(AsyncTask asyncTask, File currentPath, final String keyword, SearchFoundFile searchFoundFile) {
     if(asyncTask.isCancelled()){
       //搜索 被人为终止了
       return;
     }
+    //  从当前路径下开始搜索
     File[] files = currentPath.listFiles();
     if (ArrayUtils.isEmpty(files)) {
       return;
@@ -102,16 +100,19 @@ public class FileManagerUtils {
     }
   }
 
+  //  新建文件
   public boolean createFile(String filePath) throws IOException {
     File file = new File(filePath);
     return file.createNewFile();
   }
 
+  //  新建文件夹
   public boolean createDirectory(String dirPath) {
     File dir = new File(dirPath);
     return dir.mkdir();
   }
 
+  //  移动文件或文件夹至当前目录下
   public void moveToFolder(File file, File dir) throws IOException {
     if (file.isDirectory()) {
       FileUtils.moveDirectoryToDirectory(file, dir, false);
@@ -120,6 +121,7 @@ public class FileManagerUtils {
     }
   }
 
+  //  两文件或文件夹合并为一个文件夹
   public void mergeIntoFolder(File file1, File file2, File newFolder) throws IOException {
     FileUtils.moveFileToDirectory(file1, newFolder, true);
     FileUtils.moveFileToDirectory(file2, newFolder, false);

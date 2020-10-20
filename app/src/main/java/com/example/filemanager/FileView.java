@@ -1,27 +1,24 @@
 package com.example.filemanager;
 
-import android.os.Build;
-import androidx.annotation.RequiresApi;
-
 import java.io.File;
 import java.util.Locale;
-import java.nio.file.Path;
 
+/**
+ * @author Hibiscus_L
+ * */
 public class FileView {
-  private String fileName;
-  private Boolean isFolder;
-  private String fileType;
-  private File file;
-  private long fileSize;
-  private long fileTime;
-
-  private final String FILE_TYPE_FOLDER = "folder";
+  private final String fileName;  //  文件名称
+  private final Boolean isFolder; //  是否为文件夹
+  private final String fileType;  //  文件类型
+  private final File file;        //  文件实例
+  private final long fileSize;    //  文件大小
+  private final long fileTime;    //  文件最后修改时间
 
   public FileView(File file) {
     this.fileName = file.getName();
     if (file.isDirectory()) {
       this.isFolder = true;
-      this.fileType = FILE_TYPE_FOLDER;
+      this.fileType = "folder";
     } else {
       this.isFolder = false;
       this.fileType = getFileType(file.getName());
@@ -31,6 +28,7 @@ public class FileView {
     this.fileTime = file.lastModified();
   }
 
+  //  获取文件后缀名
   private String getFileType(String fileName) {
     if (!fileName.equals("")) {
       int dotIndex = fileName.lastIndexOf(".");

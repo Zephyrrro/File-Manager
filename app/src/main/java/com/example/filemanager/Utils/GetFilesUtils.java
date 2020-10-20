@@ -12,9 +12,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * @author Hibiscus_L
+ * */
+
 public class GetFilesUtils {
 
-  private static final String TAG = "GetFilesUtils";
   public static final String SORT_BY_TIME = "SORT_BY_TIME";
   public static final String SORT_BY_SIZE = "SORT_BY_SIZE";
   public static final String SORT_BY_DEFAULT = "SORT_BY_DEFAULT";
@@ -23,6 +26,7 @@ public class GetFilesUtils {
   private GetFilesUtils() {
   }
 
+  //  单例模式
   public static synchronized GetFilesUtils getInstance() {
     if (instance == null) {
       instance = new GetFilesUtils();
@@ -30,11 +34,14 @@ public class GetFilesUtils {
     return instance;
   }
 
+  /**
+   * @param file  文件目录树根节点
+   * 从 {@param file} 根节点开始，BFS遍历一层子节点
+   * */
   public List<FileView> getChildNode(File file) {
     List<FileView> list = new ArrayList<>();
     if (file.isDirectory()) {
       File[] files = file.listFiles();
-      Log.d(TAG, "getChildNode: " + Arrays.toString(files));
       if (files != null) {
         for (File childNode : files) {
           if (childNode.getName().startsWith(".")) {
@@ -48,11 +55,16 @@ public class GetFilesUtils {
     return list;
   }
 
+  /**
+   * @param path  文件目录树根节点路径
+   * 从 {@param path} 根节点开始，BFS遍历一层子节点
+   * */
   public List<FileView> getChildNode(String path) {
     File file = new File(path);
     return getChildNode(file);
   }
 
+  //  获取手机SD卡路径
   private String getSDPath() {
     String sdCard = Environment.getExternalStorageState();
     if (sdCard.equals(Environment.MEDIA_MOUNTED)) {
@@ -62,6 +74,7 @@ public class GetFilesUtils {
     }
   }
 
+  //  获取文件目录树根路径，若SD卡已挂载则返回SD卡路径，否则返回程序存储data的路径
   public String getBasePath() {
     String basePath = getSDPath();
     if (basePath == null) {
@@ -71,38 +84,39 @@ public class GetFilesUtils {
     }
   }
 
+  /**
+   * 文件排序方式：按文件夹优先、大小升序、时间升序
+   * @param pattern 排序方式
+   * */
   public Comparator<FileView> fileOrder(final String pattern) {
-    return new Comparator<FileView>() {
-      @Override
-      public int compare(FileView o1, FileView o2) {
-        int order = 0;
-        long diff = 0;
-        switch (pattern) {
-          case SORT_BY_SIZE:
-            diff = o1.getFileSize() - o2.getFileSize();
-            if (diff != 0) {
-              order = diff > 0 ? 1 : -1;
-            }
-            break;
-          case SORT_BY_TIME:
-            diff = o1.getFileTime() - o2.getFileTime();
-            if (diff != 0) {
-              order = diff > 0 ? 1 : -1;
-            }
-            break;
-          case SORT_BY_DEFAULT:
-          default:
-            if (o1.isFolder() && !o2.isFolder()) {
-              order = -1;
-            } else if (!o1.isFolder() && o2.isFolder()) {
-              order = 1;
-            } else {
-              order = o1.getFileName().compareTo(o2.getFileName());
-            }
-            break;
-        }
-        return order;
+    return (o1, o2) -> {
+      int order = 0;
+      long diff;
+      switch (pattern) {
+        case SORT_BY_SIZE:
+          diff = o1.getFileSize() - o2.getFileSize();
+          if (diff != 0) {
+            order = diff > 0 ? 1 : -1;
+          }
+          break;
+        case SORT_BY_TIME:
+          diff = o1.getFileTime() - o2.getFileTime();
+          if (diff != 0) {
+            order = diff > 0 ? 1 : -1;
+          }
+          break;
+        case SORT_BY_DEFAULT:
+        default:
+          if (o1.isFolder() && !o2.isFolder()) {
+            order = -1;
+          } else if (!o1.isFolder() && o2.isFolder()) {
+            order = 1;
+          } else {
+            order = o1.getFileName().compareTo(o2.getFileName());
+          }
+          break;
       }
+      return order;
     };
   }
 
@@ -110,8 +124,12 @@ public class GetFilesUtils {
     return fileOrder(SORT_BY_DEFAULT);
   }
 
+  /**
+   * 将 {@param fileSize} 转换成文本形式，规约到小数点后两位
+   * @param fileSize 文件大小
+   * */
   public String getFileSizeStr(long fileSize) {
-    String res = "";
+    String res;
     DecimalFormat df = new DecimalFormat("#.00");
     if (fileSize < 1024) {
       res = fileSize + "B";
