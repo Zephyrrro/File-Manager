@@ -17,7 +17,6 @@ public class FileView {
 
   private final String FILE_TYPE_FOLDER = "folder";
 
-  @RequiresApi(api = Build.VERSION_CODES.O)
   public FileView(File file) {
     this.fileName = file.getName();
     if (file.isDirectory()) {

@@ -7,16 +7,20 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.filemanager.Activity.BaseActivity;
 import com.example.filemanager.Activity.MainActivity;
 import com.example.filemanager.FileView;
@@ -34,8 +38,10 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
   private List<FileView> fileList;
   private static final String TAG = "FileViewAdapter";
   private List<ViewHolder> viewHolders = new ArrayList<>();
+  private Set<FileView> selectSet = new HashSet<>();
+  private SparseBooleanArray checkStates = new SparseBooleanArray();
   private Map<String, Integer> fileTypeIconMap = new HashMap<>();
-  private BaseActivity mContext;
+  private BaseActivity mContext = null;
 
   static class ViewHolder extends RecyclerView.ViewHolder {
     View fileView;
@@ -70,6 +76,10 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     fileTypeIconMap.put("png", R.drawable.filetype_png);
   }
 
+  public Set<FileView> getSelectSet() {
+    return selectSet;
+  }
+
   int fromPosition = -1;
   int toPosition = -1;
 
@@ -82,20 +92,71 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
   @NonNull
   @Override
   public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
-    mContext = (BaseActivity) parent.getContext() ;
+    if (mContext == null) {
+      mContext = (BaseActivity) parent.getContext();
+    }
     View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_view_item, parent, false);
     final ViewHolder holder = new ViewHolder(view);
+    return holder;
+  }
+
+
+  @Override
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    FileView fileView = fileList.get(position);
+    Integer fileImage = fileTypeIconMap.get(fileView.getFileType());
+    if (fileImage == null) {
+      fileImage = fileTypeIconMap.get("unknown");
+    }
+    holder.fileImage.setImageResource(fileImage);
+    String fileName = fileView.getFileName();
+    if (!showExt && !fileView.isFolder() && fileName.indexOf(".") > 0) {
+      fileName = fileName.substring(0, fileName.lastIndexOf("."));
+    }
+    holder.fileName.setText(fileName);
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
+    holder.fileModifiedTime.setText(format.format(new Date(fileView.getFileTime())));
+    holder.fileSize.setText(GetFilesUtils.getInstance().getFileSizeStr(fileView.getFileSize()));
+
+
+    holder.selected.setTag(position);
+    if (selectMode) {
+      holder.selected.setVisibility(View.VISIBLE);
+      holder.selected.setChecked(checkStates.get(position, false));
+    } else {
+      holder.selected.setVisibility(View.GONE);
+      holder.selected.setChecked(false);
+      checkStates.clear();
+    }
+    holder.selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        int pos = (int) buttonView.getTag();
+        FileView file = fileList.get(pos);
+        Log.d(TAG, "onCheckedChanged: ");
+        if (isChecked) {
+          checkStates.put(pos, true);
+          selectSet.add(file);
+        } else {
+          checkStates.delete(pos);
+          selectSet.remove(file);
+        }
+      }
+    });
+
+
+    holder.fileView.setTag(position);
     holder.fileView.setOnClickListener(v -> {
+      FileView file = fileList.get(position);
+
       if (selectMode) {
         holder.selected.setChecked(!holder.selected.isChecked());
         return;
       }
-      int position = holder.getAdapterPosition();
-      FileView file = fileList.get(position);
       if (file.isFolder()) {
         Intent intent = new Intent(v.getContext(), MainActivity.class);
         intent.putExtra("path", file.getFile().toString());
-        v.getContext().startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(mContext).toBundle());
+        v.getContext().startActivity(intent);
       } else {
         boolean isNeedMatch = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
         StrictMode.VmPolicy defaultVmPolicy = null;
@@ -112,7 +173,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
           intent.setAction(Intent.ACTION_VIEW);
           intent.setDataAndType(Uri.fromFile(new File(file.getFile().toString())), mime);
-          v.getContext().startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(mContext).toBundle());
+          v.getContext().startActivity(intent);
         } catch (Exception e) {
           e.printStackTrace();
           Toast.makeText(v.getContext(), "无法打开", Toast.LENGTH_SHORT).show();
@@ -124,46 +185,14 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
       }
     });
 
-    holder.fileView.setOnLongClickListener(new View.OnLongClickListener() {
-      @Override
-      public boolean onLongClick(View view) {
-        if (!selectMode) {
-          selectMode = true;
-          int position = holder.getAdapterPosition();
-          for (ViewHolder viewHolder : viewHolders) {
-            viewHolder.selected.setVisibility(View.VISIBLE);
-          }
-          holder.selected.setChecked(true);
-        }
-        goSelectMode(); //TODO
-        holder.selected.setChecked(true);
-        return true;
+    holder.fileView.setOnLongClickListener(view -> {
+      if (!selectMode) {
+        checkStates.put(position, true);
+        selectSet.add(fileList.get(position));
+        goSelectMode();
       }
+      return true;
     });
-    return holder;
-  }
-
-
-  @Override
-  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    Log.d(TAG, "onBindViewHolder Call");
-    FileView fileView = fileList.get(position);
-    //  TODO: 更多类型的icon
-    Integer fileImage = fileTypeIconMap.get(fileView.getFileType());
-    if (fileImage == null) {
-      fileImage = fileTypeIconMap.get("unknown");
-    }
-    holder.fileImage.setImageResource(fileImage);
-    String fileName = fileView.getFileName();
-    if(!showExt && !fileView.isFolder() && fileName.indexOf(".") > 0){
-      fileName = fileName.substring(0,fileName.lastIndexOf("."));
-    }
-    holder.fileName.setText(fileName);
-    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
-    holder.fileModifiedTime.setText(format.format(new Date(fileView.getFileTime())));
-    holder.fileSize.setText(GetFilesUtils.getInstance().getFileSizeStr(fileView.getFileSize()));
-    holder.selected.setVisibility(selectMode ? View.VISIBLE : View.GONE);
-    viewHolders.add(holder);
   }
 
 
@@ -175,9 +204,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
   public void goSelectMode() {
     selectMode = true;
     mContext.setSelectModeShow(true);
-    for (ViewHolder viewHolder : viewHolders) {
-      viewHolder.selected.setVisibility(View.VISIBLE);
-    }
+    notifyDataSetChanged();
   }
 
   public boolean leaveSelectMode() {
@@ -186,28 +213,10 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     }
     selectMode = false;
     mContext.setSelectModeShow(false);
-    for (ViewHolder viewHolder : viewHolders) {
-      viewHolder.selected.setChecked(false);
-      viewHolder.selected.setVisibility(View.GONE);
-    }
+    selectSet.clear();
+    checkStates.clear();
+    notifyDataSetChanged();
     return true;
-  }
-
-  public List<FileView> getSelected() {
-    if (!selectMode) {
-      return new ArrayList<>();
-    }
-    List<FileView> selectedFileView = new ArrayList<>();
-    for (int i = 0; i < viewHolders.size(); i++) {
-      if (viewHolders.get(i).selected.isChecked()) {
-        selectedFileView.add(fileList.get(i));
-      }
-    }
-    return selectedFileView;
-  }
-
-  public List<FileView> getFileList() {
-    return fileList;
   }
 
   public void addFile(File file) {
@@ -222,6 +231,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
 
   public void setShowExt(boolean showExt) {
     this.showExt = showExt;
+    notifyDataSetChanged();
   }
 
   public int getFromPosition() {
@@ -234,6 +244,27 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
 
   public void setFromPosition(int fromPosition) {
     this.fromPosition = fromPosition;
+  }
+
+  public void notifyOperationFinish() {
+    leaveSelectMode();
+    notifyDataSetChanged();
+  }
+
+  public void selectAll() {
+    for (FileView fileView : fileList) {
+      checkStates.put(fileList.indexOf(fileView), true);
+      selectSet.add(fileView);
+    }
+    goSelectMode();
+  }
+
+  public void setItemCheckStates(int position, boolean status) {
+    if (status) {
+      this.checkStates.put(position, true);
+    } else {
+      this.checkStates.delete(position);
+    }
   }
 }
 
