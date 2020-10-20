@@ -66,7 +66,7 @@ public class MainActivity extends BaseActivity {
                 FileManagerUtils.Instance.moveToFolder(source.getFile(), target.getFile());
                 fileList.remove(source);
                 adapter.setItemCheckStates(adapter.getFromPosition(), false);
-                adapter.notifyDataSetChanged();
+                adapter.notifyOperationFinish();
                 Toast.makeText(this, "移动成功~", Toast.LENGTH_SHORT).show();
               } catch (IOException e) {
                 e.printStackTrace();
@@ -81,7 +81,7 @@ public class MainActivity extends BaseActivity {
                 fileList.remove(target);
                 fileList.add(new FileView(newFolder));
                 adapter.setItemCheckStates(adapter.getFromPosition(), false);
-                adapter.notifyDataSetChanged();
+                adapter.notifyOperationFinish();
                 Toast.makeText(this, "移动成功~", Toast.LENGTH_SHORT).show();
               } catch (IOException e) {
                 e.printStackTrace();
