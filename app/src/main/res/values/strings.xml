@@ -1,29 +1,15 @@
 <resources>
   <string name="app_name">FileManager</string>
-  <string name="action_settings">Settings</string>
-  <!-- Strings used for fragments for navigation -->
-  <string name="first_fragment_label">First Fragment</string>
-  <string name="second_fragment_label">Second Fragment</string>
-  <string name="next">Next</string>
-  <string name="previous">Previous</string>
+    <!-- Strings used for fragments for navigation -->
 
-  <string name="hello_first_fragment">Hello first fragment</string>
-  <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-  <string name="title_activity_child">ChildActivity</string>
+    <string name="title_activity_child">ChildActivity</string>
 
   <string name="toolbar_new">新建</string>
-  <string name="toolbar_new_folder">文件夹</string>
-  <string name="toolbar_new_txt">文本文档</string>
 
-  <string name="select_all">全选</string>
-  <string name="cut">剪切</string>
-  <string name="copy">复制</string>
-  <string name="paste">粘贴</string>
-  <string name="delete">删除</string>
+    <string name="select_all">全选</string>
+    <string name="paste">粘贴</string>
 
-  <string name="search">搜索当前文件夹</string>
-  <string name="text_expand_me">展开</string>
-  <string name="text_welcome_message">Hello</string>
-  <string name="showExt">显示拓展名</string>
+    <string name="search">搜索当前文件夹</string>
+    <string name="showExt">显示拓展名</string>
 
 </resources>

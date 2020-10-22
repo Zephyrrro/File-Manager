@@ -29,12 +29,7 @@
     <item name="android:textColorSecondary">#ffffff</item>
   </style>
 
-  <style name="menu_labels_style">
-    <item name="android:background">@drawable/fab_label_background</item>
-    <item name="android:textColor">@color/colorWhite</item>
-  </style>
-
-  <style name="MyEditText" parent="Theme.AppCompat.Light">
+    <style name="MyEditText" parent="Theme.AppCompat.Light">
     <item name="colorControlNormal">@color/orangeDark</item>
     <item name="colorControlActivated">@color/orangeDark</item>
   </style>
@@ -44,13 +39,4 @@
     <item name="colorControlActivated">@color/colorWhite</item>
   </style>
 
-  <style name="IconOnlyButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-    <item name="cornerFamily">rounded</item>
-    <item name="cornerSize">50%</item>
-  </style>
-
-  <style name="Rounded" parent="">
-    <item name="cornerFamily">rounded</item>
-    <item name="cornerSize">50%</item>
-  </style>
 </resources>
