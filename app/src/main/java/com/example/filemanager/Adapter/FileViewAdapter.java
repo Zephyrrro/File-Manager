@@ -72,6 +72,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     fileTypeIconMap.put("png", R.drawable.filetype_png);
   }
 
+  // 获取当前选中的所有文件
   public Set<FileView> getSelectSet() {
     return selectSet;
   }
@@ -80,6 +81,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
   int fromPosition = -1;
   int toPosition = -1;
 
+  // 记录下拖拽的位置
   @Override
   public void onMove(int fromPosition, int toPosition) {
     this.fromPosition = fromPosition;

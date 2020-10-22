@@ -7,6 +7,10 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+/**
+ * @author gaofan
+ * 处理拖拽功能的类
+ */
 public class ItemTouchCallBack extends ItemTouchHelper.Callback{
     private static final String TAG = "ItemTouchCallBack";
     private OnItemTouchListener onItemTouchListener;
@@ -46,9 +50,11 @@ public class ItemTouchCallBack extends ItemTouchHelper.Callback{
 
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+        // 记录下来项目的起始和目标位置 ，用于进行拖拽逻辑
         int fromPosition = viewHolder.getAdapterPosition();
         int toPosition   = target.getAdapterPosition();
         Log.i(TAG,"onMove,from:" + fromPosition + "to:" + toPosition);
+        // 通知监听者进行move动作
         onItemTouchListener.onMove(fromPosition,toPosition);
         return true;
     }
@@ -56,10 +62,11 @@ public class ItemTouchCallBack extends ItemTouchHelper.Callback{
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+        // 向左滑动 本项目不使用
         Log.i(TAG,"onSwiped");
     }
     /**
-     * 移动交换数据的更新监听
+     * 移动交换数据的更新监听 - 监听者模式
      */
     public interface OnItemTouchListener {
         //拖动Item时调用
