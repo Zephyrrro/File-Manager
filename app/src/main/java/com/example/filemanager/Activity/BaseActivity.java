@@ -229,7 +229,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
-  //  设置多选模式下的UI
+  /**
+   * 设置多选模式下的UI
+   * @param isSelectMode
+   */
   public void setSelectModeShow(boolean isSelectMode) {
     if (isSelectMode) {
       fab.setVisibility(View.GONE);
@@ -244,7 +247,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
-  //  设置文件排序
+  /**
+   * 设置文件排序
+   * @param sort
+   */
   private void setFileViewSort(String sort) {
     Collections.sort(this.fileList, GetFilesUtils.getInstance().fileOrder(sort));
     adapter.notifyDataSetChanged();
@@ -289,7 +295,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
   }
 
-  //  删除文件前弹窗确认操作，确认后执行删除操作
+  /**
+   * 删除文件前弹窗确认操作，确认后执行删除操作
+   */
   private void deleteFile() {
     final Set<FileView> selected = adapter.getSelectSet();
     final Context context = this;
@@ -313,7 +321,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             }).show();
   }
 
-  //  创建文件或文件夹
+
+  /**
+   * 创建文件或文件夹
+   * @param path
+   * @param isDirectory
+   */
   private void createFileOrDir(String path, boolean isDirectory) {
     closeFloatingMenu();
     if (isDirectory) {
