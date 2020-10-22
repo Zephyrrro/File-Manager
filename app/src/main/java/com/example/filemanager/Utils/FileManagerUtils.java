@@ -127,7 +127,11 @@ public class FileManagerUtils {
     FileUtils.moveFileToDirectory(file2, newFolder, false);
   }
 
-  public List<FileView> getClipBoard() {
-    return this.paths;
+  public boolean isClipBoardEmpty() {
+    if (this.paths == null) {
+      return true;
+    } else {
+      return this.paths.isEmpty();
+    }
   }
 }

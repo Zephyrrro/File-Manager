@@ -275,7 +275,7 @@ public abstract class BaseActivity extends AppCompatActivity {
   }
 
   private void pasteFile() {
-    if (FileManagerUtils.Instance.getClipBoard().isEmpty()) {
+    if (FileManagerUtils.Instance.isClipBoardEmpty()) {
       Toast.makeText(this, "剪切板为空~", Toast.LENGTH_SHORT).show();
       return;
     }
